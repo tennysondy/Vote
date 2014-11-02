@@ -80,6 +80,7 @@
 		6F3AFE7919AEE8BB009430CD /* trekking@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F3AFE6E19AEE8BB009430CD /* trekking@2x.png */; };
 		6F3AFE7A19AEE8BB009430CD /* yoga@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F3AFE6F19AEE8BB009430CD /* yoga@2x.png */; };
 		6F3AFE7D19AEF6EF009430CD /* running@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F3AFE7C19AEF6EF009430CD /* running@2x.png */; };
+		6F3B9E211A02359A00BEE7B5 /* loadingIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F3B9E201A02359A00BEE7B5 /* loadingIcon@2x.png */; };
 		6F3C9EE119A11B07006A12A3 /* VoteKeywordOptionsListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F3C9EE019A11B07006A12A3 /* VoteKeywordOptionsListTableViewController.m */; };
 		6F3C9EE419A11B3A006A12A3 /* VoteCustomAddressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F3C9EE319A11B3A006A12A3 /* VoteCustomAddressViewController.m */; };
 		6F3D8C1718C24B6E00420986 /* VoteForgetPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F3D8C1618C24B6E00420986 /* VoteForgetPasswordViewController.m */; };
@@ -138,6 +139,14 @@
 		6F9F3A4318DDC3E400D49194 /* UIImageToDataTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F9F3A4218DDC3E400D49194 /* UIImageToDataTransformer.m */; };
 		6F9F3A4618DDDDCA00D49194 /* UIImage+UIImageHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F9F3A4518DDDDCA00D49194 /* UIImage+UIImageHelper.m */; };
 		6FAF35C4197C0FC700C454E8 /* VoteFriendsDetailsInfoTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FAF35C3197C0FC700C454E8 /* VoteFriendsDetailsInfoTableViewController.m */; };
+		6FB0B7BE19FF96AE00262ED5 /* MJRefresh.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6FB0B7AE19FF96AE00262ED5 /* MJRefresh.bundle */; };
+		6FB0B7BF19FF96AE00262ED5 /* MJRefreshBaseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB0B7B119FF96AE00262ED5 /* MJRefreshBaseView.m */; };
+		6FB0B7C019FF96AE00262ED5 /* MJRefreshConst.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB0B7B319FF96AE00262ED5 /* MJRefreshConst.m */; };
+		6FB0B7C119FF96AE00262ED5 /* MJRefreshFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB0B7B519FF96AE00262ED5 /* MJRefreshFooterView.m */; };
+		6FB0B7C219FF96AE00262ED5 /* MJRefreshHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB0B7B719FF96AE00262ED5 /* MJRefreshHeaderView.m */; };
+		6FB0B7C319FF96AE00262ED5 /* UIScrollView+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB0B7B919FF96AE00262ED5 /* UIScrollView+MJExtension.m */; };
+		6FB0B7C419FF96AE00262ED5 /* UIScrollView+MJRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB0B7BB19FF96AE00262ED5 /* UIScrollView+MJRefresh.m */; };
+		6FB0B7C519FF96AE00262ED5 /* UIView+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB0B7BD19FF96AE00262ED5 /* UIView+MJExtension.m */; };
 		6FB6EB0A196ACB9E00D160BB /* VoteChooseOptionsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB6EB09196ACB9E00D160BB /* VoteChooseOptionsTableViewController.m */; };
 		6FBCDD9319B77A8B0098C6AC /* BigParty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FBCDD9119B77A8B0098C6AC /* BigParty@2x.png */; };
 		6FBCDD9419B77A8B0098C6AC /* chat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FBCDD9219B77A8B0098C6AC /* chat@2x.png */; };
@@ -161,6 +170,7 @@
 		6FD8E15D19D9CBA400A5A654 /* aboutBg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FD8E15C19D9CBA400A5A654 /* aboutBg@2x.png */; };
 		6FD8E15F19D9CBF500A5A654 /* launchImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FD8E15E19D9CBF500A5A654 /* launchImage@2x.png */; };
 		6FD8E16319D9D1E000A5A654 /* loginLogo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FD8E16219D9D1E000A5A654 /* loginLogo@2x.png */; };
+		6FE7390A1A022A1400A58B43 /* LoadingIconImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE739091A022A1400A58B43 /* LoadingIconImageView.m */; };
 		6FEBD55919F808ED00C07950 /* nothing@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FEBD55819F808ED00C07950 /* nothing@2x.png */; };
 		6FEBD56D19F80DCE00C07950 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FEBD55B19F80DCE00C07950 /* AFHTTPRequestOperation.m */; };
 		6FEBD56E19F80DCE00C07950 /* AFHTTPRequestOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FEBD55D19F80DCE00C07950 /* AFHTTPRequestOperationManager.m */; };
@@ -300,6 +310,7 @@
 		6F3AFE6E19AEE8BB009430CD /* trekking@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trekking@2x.png"; sourceTree = "<group>"; };
 		6F3AFE6F19AEE8BB009430CD /* yoga@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yoga@2x.png"; sourceTree = "<group>"; };
 		6F3AFE7C19AEF6EF009430CD /* running@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "running@2x.png"; sourceTree = "<group>"; };
+		6F3B9E201A02359A00BEE7B5 /* loadingIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "loadingIcon@2x.png"; sourceTree = "<group>"; };
 		6F3C9EDF19A11B07006A12A3 /* VoteKeywordOptionsListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteKeywordOptionsListTableViewController.h; sourceTree = "<group>"; };
 		6F3C9EE019A11B07006A12A3 /* VoteKeywordOptionsListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoteKeywordOptionsListTableViewController.m; sourceTree = "<group>"; };
 		6F3C9EE219A11B3A006A12A3 /* VoteCustomAddressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteCustomAddressViewController.h; sourceTree = "<group>"; };
@@ -390,6 +401,22 @@
 		6F9F3A4518DDDDCA00D49194 /* UIImage+UIImageHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+UIImageHelper.m"; sourceTree = "<group>"; };
 		6FAF35C2197C0FC700C454E8 /* VoteFriendsDetailsInfoTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteFriendsDetailsInfoTableViewController.h; sourceTree = "<group>"; };
 		6FAF35C3197C0FC700C454E8 /* VoteFriendsDetailsInfoTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoteFriendsDetailsInfoTableViewController.m; sourceTree = "<group>"; };
+		6FB0B7AE19FF96AE00262ED5 /* MJRefresh.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MJRefresh.bundle; sourceTree = "<group>"; };
+		6FB0B7AF19FF96AE00262ED5 /* MJRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefresh.h; sourceTree = "<group>"; };
+		6FB0B7B019FF96AE00262ED5 /* MJRefreshBaseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefreshBaseView.h; sourceTree = "<group>"; };
+		6FB0B7B119FF96AE00262ED5 /* MJRefreshBaseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJRefreshBaseView.m; sourceTree = "<group>"; };
+		6FB0B7B219FF96AE00262ED5 /* MJRefreshConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefreshConst.h; sourceTree = "<group>"; };
+		6FB0B7B319FF96AE00262ED5 /* MJRefreshConst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJRefreshConst.m; sourceTree = "<group>"; };
+		6FB0B7B419FF96AE00262ED5 /* MJRefreshFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefreshFooterView.h; sourceTree = "<group>"; };
+		6FB0B7B519FF96AE00262ED5 /* MJRefreshFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJRefreshFooterView.m; sourceTree = "<group>"; };
+		6FB0B7B619FF96AE00262ED5 /* MJRefreshHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefreshHeaderView.h; sourceTree = "<group>"; };
+		6FB0B7B719FF96AE00262ED5 /* MJRefreshHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJRefreshHeaderView.m; sourceTree = "<group>"; };
+		6FB0B7B819FF96AE00262ED5 /* UIScrollView+MJExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+MJExtension.h"; sourceTree = "<group>"; };
+		6FB0B7B919FF96AE00262ED5 /* UIScrollView+MJExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MJExtension.m"; sourceTree = "<group>"; };
+		6FB0B7BA19FF96AE00262ED5 /* UIScrollView+MJRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+MJRefresh.h"; sourceTree = "<group>"; };
+		6FB0B7BB19FF96AE00262ED5 /* UIScrollView+MJRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MJRefresh.m"; sourceTree = "<group>"; };
+		6FB0B7BC19FF96AE00262ED5 /* UIView+MJExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+MJExtension.h"; sourceTree = "<group>"; };
+		6FB0B7BD19FF96AE00262ED5 /* UIView+MJExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+MJExtension.m"; sourceTree = "<group>"; };
 		6FB6EB08196ACB9E00D160BB /* VoteChooseOptionsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteChooseOptionsTableViewController.h; sourceTree = "<group>"; };
 		6FB6EB09196ACB9E00D160BB /* VoteChooseOptionsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoteChooseOptionsTableViewController.m; sourceTree = "<group>"; };
 		6FBCDD9119B77A8B0098C6AC /* BigParty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BigParty@2x.png"; sourceTree = "<group>"; };
@@ -417,6 +444,8 @@
 		6FD8E15C19D9CBA400A5A654 /* aboutBg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "aboutBg@2x.png"; sourceTree = "<group>"; };
 		6FD8E15E19D9CBF500A5A654 /* launchImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "launchImage@2x.png"; sourceTree = "<group>"; };
 		6FD8E16219D9D1E000A5A654 /* loginLogo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "loginLogo@2x.png"; sourceTree = "<group>"; };
+		6FE739081A022A1400A58B43 /* LoadingIconImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingIconImageView.h; sourceTree = "<group>"; };
+		6FE739091A022A1400A58B43 /* LoadingIconImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingIconImageView.m; sourceTree = "<group>"; };
 		6FEBD55819F808ED00C07950 /* nothing@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nothing@2x.png"; sourceTree = "<group>"; };
 		6FEBD55A19F80DCE00C07950 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
 		6FEBD55B19F80DCE00C07950 /* AFHTTPRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPRequestOperation.m; sourceTree = "<group>"; };
@@ -621,6 +650,8 @@
 				6F5200DC19968A9500828778 /* YIInnerShadowLayer.m */,
 				6F5200DD19968A9500828778 /* YIInnerShadowView.h */,
 				6F5200DE19968A9500828778 /* YIInnerShadowView.m */,
+				6FE739081A022A1400A58B43 /* LoadingIconImageView.h */,
+				6FE739091A022A1400A58B43 /* LoadingIconImageView.m */,
 			);
 			name = Help;
 			sourceTree = "<group>";
@@ -847,6 +878,7 @@
 				6F2FF8621949BAA000EC9A76 /* SecondTab */,
 				6F30C1FF19BC345F00A90226 /* ThirdTab */,
 				6F2FF8631949BABB00EC9A76 /* FourthTab */,
+				6FB0B7AD19FF96AE00262ED5 /* MJRefresh */,
 				6F2FF86F1949C0BF00EC9A76 /* Popover */,
 				6F2FF8761949C11700EC9A76 /* DianPingDev */,
 				6FBC3243194CBB9E0054FCF0 /* Image */,
@@ -942,6 +974,29 @@
 			path = "UIKit+AFNetworking";
 			sourceTree = "<group>";
 		};
+		6FB0B7AD19FF96AE00262ED5 /* MJRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				6FB0B7AE19FF96AE00262ED5 /* MJRefresh.bundle */,
+				6FB0B7AF19FF96AE00262ED5 /* MJRefresh.h */,
+				6FB0B7B019FF96AE00262ED5 /* MJRefreshBaseView.h */,
+				6FB0B7B119FF96AE00262ED5 /* MJRefreshBaseView.m */,
+				6FB0B7B219FF96AE00262ED5 /* MJRefreshConst.h */,
+				6FB0B7B319FF96AE00262ED5 /* MJRefreshConst.m */,
+				6FB0B7B419FF96AE00262ED5 /* MJRefreshFooterView.h */,
+				6FB0B7B519FF96AE00262ED5 /* MJRefreshFooterView.m */,
+				6FB0B7B619FF96AE00262ED5 /* MJRefreshHeaderView.h */,
+				6FB0B7B719FF96AE00262ED5 /* MJRefreshHeaderView.m */,
+				6FB0B7B819FF96AE00262ED5 /* UIScrollView+MJExtension.h */,
+				6FB0B7B919FF96AE00262ED5 /* UIScrollView+MJExtension.m */,
+				6FB0B7BA19FF96AE00262ED5 /* UIScrollView+MJRefresh.h */,
+				6FB0B7BB19FF96AE00262ED5 /* UIScrollView+MJRefresh.m */,
+				6FB0B7BC19FF96AE00262ED5 /* UIView+MJExtension.h */,
+				6FB0B7BD19FF96AE00262ED5 /* UIView+MJExtension.m */,
+			);
+			path = MJRefresh;
+			sourceTree = "<group>";
+		};
 		6FBC3243194CBB9E0054FCF0 /* Image */ = {
 			isa = PBXGroup;
 			children = (
@@ -950,6 +1005,7 @@
 				6FD8E16219D9D1E000A5A654 /* loginLogo@2x.png */,
 				6F3FCDD519D5299A00A2925C /* tuan@2x.png */,
 				6F3FCDD719D52AE800A2925C /* coupon@2x.png */,
+				6F3B9E201A02359A00BEE7B5 /* loadingIcon@2x.png */,
 				6F2D014C19B0EE0500E15D4A /* TabBarImages */,
 				6F2D014D19B0EE2300E15D4A /* FirstTab */,
 				6F2D014B19B0EDE300E15D4A /* SecondTab */,
@@ -1125,6 +1181,7 @@
 				6F2D016519B0FC0500E15D4A /* feedback@2x.png in Resources */,
 				6F3AFE7219AEE8BB009430CD /* bike@2x.png in Resources */,
 				6FBCDDA019B7854C0098C6AC /* film@2x.png in Resources */,
+				6FB0B7BE19FF96AE00262ED5 /* MJRefresh.bundle in Resources */,
 				6FBCDD9B19B782110098C6AC /* rice@2x.png in Resources */,
 				6FCD927619E597C800D35975 /* aboutBg5S@2x.png in Resources */,
 				6F2D016D19B18B0F00E15D4A /* personalInfo@2x.png in Resources */,
@@ -1142,6 +1199,7 @@
 				6F4E5F7B19D3E5830011A0C6 /* telephone@2x.png in Resources */,
 				6F2F292F19B8411C00B1A9BA /* selectedFourth@2x.png in Resources */,
 				6F881944196C584F0083F807 /* multiCheckmark.png in Resources */,
+				6F3B9E211A02359A00BEE7B5 /* loadingIcon@2x.png in Resources */,
 				6F3AFE7319AEE8BB009430CD /* dancing@2x.png in Resources */,
 				6F39A547196D80B700675122 /* singleCheck.png in Resources */,
 				6F3AFE7D19AEF6EF009430CD /* running@2x.png in Resources */,
@@ -1187,6 +1245,7 @@
 				6F3C9EE119A11B07006A12A3 /* VoteKeywordOptionsListTableViewController.m in Sources */,
 				6FB6EB0A196ACB9E00D160BB /* VoteChooseOptionsTableViewController.m in Sources */,
 				6F9F3A4618DDDDCA00D49194 /* UIImage+UIImageHelper.m in Sources */,
+				6FB0B7C119FF96AE00262ED5 /* MJRefreshFooterView.m in Sources */,
 				6FEBD57319F80DCE00C07950 /* AFURLRequestSerialization.m in Sources */,
 				6F9F3A4318DDC3E400D49194 /* UIImageToDataTransformer.m in Sources */,
 				6F2FF87B1949C15500EC9A76 /* DianPingAPI.m in Sources */,
@@ -1194,6 +1253,7 @@
 				6FAF35C4197C0FC700C454E8 /* VoteFriendsDetailsInfoTableViewController.m in Sources */,
 				6F5200E019968A9500828778 /* YIInnerShadowView.m in Sources */,
 				6F424C7F19C96C8400981A51 /* VoteCityTableViewController.m in Sources */,
+				6FB0B7C019FF96AE00262ED5 /* MJRefreshConst.m in Sources */,
 				6FEBD58B19F80DF500C07950 /* UIImageView+AFNetworking.m in Sources */,
 				6FD4C03518CAB7F80003FE7C /* CoreDataHelper.m in Sources */,
 				6F47D1871998E0ED00BD41AD /* Friends.m in Sources */,
@@ -1210,6 +1270,7 @@
 				6F2FF8851949D04500EC9A76 /* VoteDefaultOptionsListViewController.m in Sources */,
 				6F3799391966DB300089C1D1 /* VoteBarResultsView.m in Sources */,
 				6F33458D199B5A9E0086BB36 /* VoteLookUpParticipantsCell.m in Sources */,
+				6FB0B7C219FF96AE00262ED5 /* MJRefreshHeaderView.m in Sources */,
 				6F2FF8751949C0E900EC9A76 /* WYStoryboardPopoverSegue.m in Sources */,
 				6FEBD56D19F80DCE00C07950 /* AFHTTPRequestOperation.m in Sources */,
 				6F33E562199A1F50000C8277 /* VoteOptionDetailsTableViewController.m in Sources */,
@@ -1223,9 +1284,12 @@
 				6F4D296E1978140F00890301 /* VoteSetUserInfoTableViewController.m in Sources */,
 				6F47D17B1998D67F00BD41AD /* VoteAddActivityImageTableViewController.m in Sources */,
 				6F1F6BB6197FA2D400CF7E82 /* VoteFriendsSendAddReqViewController.m in Sources */,
+				6FE7390A1A022A1400A58B43 /* LoadingIconImageView.m in Sources */,
 				6F4CF78D19A1EDBE00AFE2E3 /* VoteOptionsAddrListTableViewCell.m in Sources */,
 				6FEBD57119F80DCE00C07950 /* AFSecurityPolicy.m in Sources */,
+				6FB0B7BF19FF96AE00262ED5 /* MJRefreshBaseView.m in Sources */,
 				6FEBD58919F80DF500C07950 /* UIAlertView+AFNetworking.m in Sources */,
+				6FB0B7C519FF96AE00262ED5 /* UIView+MJExtension.m in Sources */,
 				6F6A2255194B150A00EB87DD /* VotesInfo+VotesInfoHelper.m in Sources */,
 				6F5F15EC19DC2F58008B1595 /* VotesInfo.m in Sources */,
 				6F7B4CD318BB87A7002B9094 /* VoteSignUpViewController.m in Sources */,
@@ -1236,6 +1300,7 @@
 				6F1FB92F199E229300833239 /* VoteBusinessDetailsHelper.m in Sources */,
 				6FEBD58C19F80DF500C07950 /* UIProgressView+AFNetworking.m in Sources */,
 				6F2FF8741949C0E900EC9A76 /* WYPopoverController.m in Sources */,
+				6FB0B7C419FF96AE00262ED5 /* UIScrollView+MJRefresh.m in Sources */,
 				6F2D81D918D3F36900F59B9A /* VoteAddFriendsViewController.m in Sources */,
 				6F7B4CD618BB8B9F002B9094 /* VoteHomeViewController.m in Sources */,
 				6FEBD57519F80DCE00C07950 /* AFURLSessionManager.m in Sources */,
@@ -1247,6 +1312,7 @@
 				6F47125519A332BF003E9117 /* FailedDeletedVotes+Helper.m in Sources */,
 				6F2E8868198D2D6C00302112 /* VoteAddOptionsTableViewController.m in Sources */,
 				6F7B4C9818BB83E5002B9094 /* VoteLoginViewController.m in Sources */,
+				6FB0B7C319FF96AE00262ED5 /* UIScrollView+MJExtension.m in Sources */,
 				6F47124C19A33080003E9117 /* FailedDeletedFriends.m in Sources */,
 				6F33E55F199A191C000C8277 /* Options.m in Sources */,
 				6FEBD58D19F80DF500C07950 /* UIRefreshControl+AFNetworking.m in Sources */,
@@ -1399,7 +1465,7 @@
 				GCC_PREFIX_HEADER = "Vote/Vote-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/VoteTests/VoteTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "61ac2b5b-0ec9-4295-ad88-f0ca3799b1ce";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1416,7 +1482,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/VoteTests/VoteTests-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "61ac2b5b-0ec9-4295-ad88-f0ca3799b1ce";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

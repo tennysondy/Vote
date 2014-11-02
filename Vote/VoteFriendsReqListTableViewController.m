@@ -13,6 +13,7 @@
 #import "CoreDataHelper.h"
 #import "Friends+FriendsHelper.h"
 #import "VoteFriendsDetailsInfoTableViewController.h"
+#import "LoadingIconImageView.h"
 
 @interface VoteFriendsReqListTableViewController () <NSFetchedResultsControllerDelegate>
 
@@ -71,9 +72,8 @@
     self.loadingPrompt.textAlignment = NSTextAlignmentCenter;
     self.loadingPrompt.font = [UIFont boldSystemFontOfSize:15.0];
     [self.view addSubview:self.loadingPrompt];
-    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 0, 24, 24)];
+    LoadingIconImageView *activityIndicator = [[LoadingIconImageView alloc]initWithFrame:CGRectMake(0, 0, 24, 24)];
     activityIndicator.center = CGPointMake(self.view.center.x, self.view.center.y - 44);
-    [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     [self.view addSubview:activityIndicator];
     [activityIndicator startAnimating];
     //下载数据
@@ -91,6 +91,7 @@
         [self.loadingPrompt removeFromSuperview];
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         [activityIndicator stopAnimating];
+        [activityIndicator removeFromSuperview];
         if ((NSNull *)[responseObject objectForKey:SERVER_STRANGERS_ARRAY] == [NSNull null]) {
             return;
         }
@@ -133,6 +134,12 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 - (void)didReceiveMemoryWarning

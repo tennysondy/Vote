@@ -39,6 +39,12 @@
     memset(selectFlag, NO, sizeof(selectFlag));
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
 - (IBAction)save:(id)sender {
     if ([self.gender length] <= 0) {
         UIAlertView *alert = nil;

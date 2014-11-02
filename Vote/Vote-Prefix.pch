@@ -77,7 +77,7 @@
 #define SERVER_THUMBNAILS_HEAD_IMAGE_URL     @"thumbnails_head_imag_url"
 #define SERVER_SCREENNAME                    @"screen_name"
 #define SERVER_SCREENNAME_PINYIN             @"screen_name_pinyin"
-#define SERVER_STRANGER_MSG                  @"stranger_msg"
+#define SERVER_STRANGER_MSG                  @"message"
 #define SERVER_USER_SIGNATURE                @"signature"
 #define SERVER_BASIC_INFO_LAST_UPDATE_TAG    @"usr_info_timestamp"
 #define SERVER_HEAD_IMAGE_LAST_UPDATE_TAG    @"head_imag_timestamp"
@@ -204,6 +204,8 @@
 #define DELETE_FRIEND_REQUEST   3
 #define AGREE_FRIEND_REQUEST    4
 
-
+//location service time stamp
+#define LOCATION_SERVICE_CHECK_TIMESTAMP     @"location_service_check_timestamp"
 //city location update para
 #define CITY_UPDATE_TIMESTAMP                @"city_update_timestamp"
+

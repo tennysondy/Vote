@@ -97,7 +97,6 @@
     self.businessListUpdateTime = [[NSMutableDictionary alloc] initWithCapacity:[self.menuList count]];
     //初始化tableview
     [self createMainScrollView];
-    [self setupLocationManager];
     self.sortBtn.backgroundColor = UIColorFromRGB(0xF5F5F5);
     [self.sortBtn setTintColor:[UIColor blackColor]];
     [self.view bringSubviewToFront:self.sortBtn];
@@ -122,6 +121,8 @@
     //创建自定义视图
     //[self createCustomLocationView];
     //[self segmentedCtrlRightViewHidden:YES];
+    //建立定位服务
+    [self setupLocationManager];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -139,6 +140,7 @@
 {
     [super viewWillDisappear:animated];
     [self.locationManager stopUpdatingLocation];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 
@@ -188,7 +190,7 @@
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
     if ([NSString checkWhitespaceAndNewlineCharacter:searchBar.text] == YES) {
-        UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"输入不可为空" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"无法进行搜索" message:@"搜索栏输入不可为空" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
         [av show];
     } else {
         [self performSegueWithIdentifier:@"Keyword Search" sender:self];
@@ -201,15 +203,21 @@
 
 - (void)setupLocationManager
 {
-    self.locationManager = [[CLLocationManager alloc] init];
-    if ([CLLocationManager locationServicesEnabled]) {
-        self.locationManager.delegate = self;
-        self.locationManager.distanceFilter = 100.0;
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
-        self.currentLocation = [[CLLocation alloc] init];
-    } else {
+    if ([CLLocationManager locationServicesEnabled] == NO || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied) {
         NSLog(@"user doesn't enable the location service!");
+        //如果没有开启定位服务，则在此处刷新table数据
+        [self getDataFromServerWithCategory:self.currentCategory inTableView:self.middleTableView withIndex:currentMenuIndex loadMore:NO refreshAll:YES];
+        
+        UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"无法使用定位服务" message:@"请在手机[设置]->[隐私]->[定位服务]中打开并允许找乐儿使用定位服务" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        [av show];
+        return;
     }
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    self.locationManager.distanceFilter = 50.0;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    self.currentLocation = [[CLLocation alloc] init];
+
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
@@ -400,13 +408,12 @@
     NSDictionary *optionPara;
     NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
     NSString *userCity = [ud stringForKey:SERVER_CITY];
+    NSLog(@"city: %@", self.city);
     if ([self.city isEqualToString:userCity]) {
         optionPara = @{DIANPING_LATITUDE:[NSNumber numberWithFloat:(float)coordinate.latitude], DIANPING_LONGITUDE:[NSNumber numberWithFloat:(float)coordinate.longitude], DIANPING_OFFSET_TYPE:offsetType, DIANPING_RADIUS:radius, DIANPING_CATEGORY:category, DIANPING_SORT:sort, DIANPING_PAGE:page, DIANPING_LIMIT:limit, DIANPING_PLATFORM:platform};
     } else {
         optionPara = @{DIANPING_CITY:self.city, DIANPING_CATEGORY:category, DIANPING_SORT:sort, DIANPING_PAGE:page, DIANPING_LIMIT:limit, DIANPING_PLATFORM:platform};
     }
-
-    //NSDictionary *optionPara = @{DIANPING_CITY:@"北京", DIANPING_REGION:@"海淀区", DIANPING_CATEGORY:category, DIANPING_PAGE:page, DIANPING_LIMIT:limit, DIANPING_PLATFORM:platform};
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] initWithCapacity:15];
     [parameters setValuesForKeysWithDictionary:optionPara];
     NSString *sign = [DianPingAPI signGeneratedInSHA1With:optionPara];
@@ -658,6 +665,7 @@
     NSString *business = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_NAME];
     NSString *branchName = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_BRANCH_NAME];
     cell.businessName.text = [business stringByAppendingFormat:@"(%@)", branchName];
+    //优惠券和团购
     if (hasCoupon && hasDeal) {
         [cell modifyBusinessNameWidth:OALTVC_BUSINESS_NAME_WIDTH2];
         cell.firstView.image = [UIImage imageNamed:@"tuan.png"];
@@ -674,7 +682,6 @@
             [cell modifyBusinessNameWidth:OALTVC_BUSINESS_NAME_WIDTH];
         }
     }
-    //优惠券和团购
     
     //商户评级
     NSString *ratingURL = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_RATING_IMAGE_URL];
@@ -691,7 +698,19 @@
     //区域和分类，region and category
     NSArray *rgn = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_REGION_REP];
     NSArray *ctgry = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_CATEGORY_REP];
-    cell.rgnCtgry.text = [NSString stringWithFormat:@"%@  %@",[rgn firstObject], [ctgry firstObject]];
+    NSString *rgnStr;
+    NSString *ctgryStr;
+    if ([rgn count] > 0) {
+        rgnStr = [rgn firstObject];
+    } else {
+        rgnStr = @"暂无";
+    }
+    if ([ctgry count] > 0) {
+        ctgryStr = [ctgry firstObject];
+    } else {
+        ctgryStr = @"暂无";
+    }
+    cell.rgnCtgry.text = [NSString stringWithFormat:@"%@  %@",rgnStr, ctgryStr];
     //距离
     //是否同城
     NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];

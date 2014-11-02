@@ -84,6 +84,12 @@
     
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
 - (IBAction)publish:(id)sender {
     
     if ([NSString checkWhitespaceAndNewlineCharacter:self.subject.text] == YES) {
@@ -174,6 +180,9 @@
     //创建选项列表
     NSMutableArray *options = [self createOptions];
     NSString *city = [[NSUserDefaults standardUserDefaults] objectForKey:SERVER_CITY];
+    if (city == nil) {
+        city = @"北京";
+    }
     NSLog(@"city:%@", city);
     NSDictionary *voteInfo = @{SERVER_CITY:city, SERVER_VOTE_ORGANIZER:organizer, SERVER_VOTE_TITLE:self.subject.text, SERVER_VOTE_DESCRIPTION:self.activityDesc.text, SERVER_VOTE_IMAGE_URL:[self.imageAttr objectForKey:@"name"], SERVER_VOTE_START_TIME:startTime, SERVER_VOTE_END_TIME:endTime, VOTE_PARTICIPANTS:self.participants, SERVER_VOTE_THE_PUBLIC_FLAG:self.thePublic, SERVER_VOTE_ANONYMOUS_FLAG:self.anonymous,SERVER_VOTE_MAX_CHOICE:choice, SERVER_VOTE_OPTIONS:options};
     
@@ -578,7 +587,11 @@
         segmentCtrl.tag = CATVC_PUBLIC_SEGMENT_TAG;
         segmentCtrl.frame = CGRectMake(210.0, 10.0, 90.0, 30.0);
         segmentCtrl.tintColor = UIColorFromRGB(0x1AB5FF);
-        segmentCtrl.selectedSegmentIndex = 0;
+        if ([self.thePublic boolValue] == YES) {
+            segmentCtrl.selectedSegmentIndex = 0;
+        } else {
+            segmentCtrl.selectedSegmentIndex = 1;
+        }
         [segmentCtrl addTarget:self action:@selector(segmentCtrlSelectedOnPulic:) forControlEvents:UIControlEventValueChanged];
         [cell.contentView addSubview:segmentCtrl];
         
@@ -608,7 +621,11 @@
         segmentCtrl.tag = CATVC_ANONYMOUS_SEGMENT_TAG;
         segmentCtrl.frame = CGRectMake(210.0, 10.0, 90.0, 30.0);
         segmentCtrl.tintColor = UIColorFromRGB(0x1AB5FF);
-        segmentCtrl.selectedSegmentIndex = 1;
+        if ([self.anonymous boolValue] == NO) {
+            segmentCtrl.selectedSegmentIndex = 0;
+        } else {
+            segmentCtrl.selectedSegmentIndex = 1;
+        }
         [segmentCtrl addTarget:self action:@selector(segmentCtrlSelectedOnAnonymous:) forControlEvents:UIControlEventValueChanged];
         [cell.contentView addSubview:segmentCtrl];
 

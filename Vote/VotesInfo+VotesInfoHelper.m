@@ -37,9 +37,12 @@
 + (void)updateDatabaseWithList:(NSArray *)data withContext:(NSManagedObjectContext *)context
 {
     VotesInfo *aVote = nil;
+    //get login username
+    NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+    NSString *username = [ud stringForKey:USERNAME];
     for (NSDictionary *element in data) {
         NSNumber *voteId = [element objectForKey:SERVER_VOTE_ID];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"voteID == %@", voteId];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whoseVote.username == %@) AND (voteID == %@)", username, voteId];
         NSArray *results = [CoreDataHelper searchObjectsForEntity:VOTES_INFO withPredicate:predicate andSortKey:nil andSortAscending:YES andContext:context];
         if ([results count] == 1) {
             aVote = [results firstObject];
@@ -214,8 +217,11 @@
 {
     NSLog(@"%@", data);
     VotesInfo *aVote = nil;
+    //get login username
+    NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+    NSString *username = [ud stringForKey:USERNAME];
     NSNumber *voteId = [data objectForKey:SERVER_VOTE_ID];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"voteID == %@", voteId];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whoseVote.username == %@) AND (voteID == %@)", username, voteId];
     NSArray *results = [CoreDataHelper searchObjectsForEntity:VOTES_INFO withPredicate:predicate andSortKey:nil andSortAscending:YES andContext:context];
     if ([results count] == 1) {
         aVote = [results firstObject];

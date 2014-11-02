@@ -19,7 +19,7 @@
 @property (strong, nonatomic) UIImageView *firstView;
 @property (strong, nonatomic) UIImageView *secondView;
 
-@property (strong, nonatomic) UIView *separator;
+@property (strong, nonatomic) UIView *cellSeparator;
 
 - (void)modifyBusinessNameWidth:(float)width;
 

@@ -19,7 +19,7 @@
 @end
 
 //选项更新timer次数
-#define ADTVC_BARVIEW_DURATION                 2.0
+#define ADTVC_BARVIEW_DURATION                 1.0
 #define ADTVC_UTIMER_REPEAT_COUNT              (int)(ADTVC_BARVIEW_DURATION/0.05)
 
 //主题cell
@@ -71,4 +71,5 @@
 #define ADTVC_OPTIONS_VOTE_PERCENT_FONT_SIZE   13.0
 
 
-
+#define ADTVC_ACTION_SHEET_NO_ADDR_TAG         2001
+#define ADTVC_ACTION_SHEET_NORMAL_TAG          2002

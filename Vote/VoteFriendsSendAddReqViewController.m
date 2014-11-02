@@ -33,6 +33,12 @@
     [self.additionalMsg becomeFirstResponder];
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
 
 - (IBAction)sendReq:(id)sender {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;

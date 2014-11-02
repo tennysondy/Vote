@@ -46,6 +46,8 @@
         self.optionCatrgory = self.defaultCategory;
     }
     self.optionAddress = [[NSMutableDictionary alloc] initWithCapacity:2];
+    NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+    self.optionCity = [ud stringForKey:SERVER_CITY];
 }
 
 - (void)didReceiveMemoryWarning
@@ -182,11 +184,9 @@
         
     } else if (indexPath.section == 2) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"City" forIndexPath:indexPath];
-        NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
-        NSString *city = [ud stringForKey:SERVER_CITY];
-        if (city != nil) {
-            self.optionCity = city;
-            cell.textLabel.text = city;
+
+        if (self.optionCity != nil) {
+            cell.textLabel.text = self.optionCity;
             cell.textLabel.textColor = [UIColor blackColor];
         } else {
             cell.textLabel.text = @"点击选择城市";
@@ -231,8 +231,20 @@
     } else if (indexPath.section == 2) {
         [self performSegueWithIdentifier:@"Select Option City" sender:indexPath];
     } else if (indexPath.section == 3 && indexPath.row == 0) {
-        [self performSegueWithIdentifier:@"Select Option Location" sender:indexPath];
+        if (self.optionCity == nil) {
+            UIAlertView *alert = nil;
+            alert = [[UIAlertView alloc] initWithTitle:@"提示"
+                                               message:@"请先选择城市"
+                                              delegate:nil
+                                     cancelButtonTitle:@"确定"
+                                     otherButtonTitles:nil];
+            [alert show];
+        } else {
+            [self performSegueWithIdentifier:@"Select Option Location" sender:indexPath];
+        }
+        
     }
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -346,22 +358,10 @@
         tvc.optionCategoryDelegate = self;
         
     } else if ([segue.identifier isEqualToString:@"Select Option Location"]) {
-        if (self.optionCity == nil) {
-            UIAlertView *alert = nil;
-            alert = [[UIAlertView alloc] initWithTitle:@"请选择城市"
-                                               message:nil
-                                              delegate:nil
-                                     cancelButtonTitle:@"确定"
-                                     otherButtonTitles:nil];
-            return;
-        }
         VoteDefaultOptionsListViewController *vc = segue.destinationViewController;
         vc.city = self.optionCity;
         
-    } else {
-    
-    }
-    if ([segue.identifier isEqualToString:@"Select Option City"]) {
+    } else if ([segue.identifier isEqualToString:@"Select Option City"]) {
         VoteCityTableViewController *tvc = [[segue.destinationViewController viewControllers] firstObject];
         NSIndexPath *indexPath = (NSIndexPath *)sender;
         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
@@ -371,6 +371,8 @@
             weakCell.textLabel.text = city;
             weakSelf.optionCity = city;
         };
+    } else {
+        //do nothing
     }
     //设置返回键的标题
     UIBarButtonItem *backItem = [[UIBarButtonItem alloc]init];

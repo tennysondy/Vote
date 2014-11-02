@@ -115,6 +115,12 @@
     
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -280,6 +286,7 @@
 - (IBAction)send:(id)sender {
     if ([self.checkMarkSet count] >= 1) {
         //显示loading动画
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
         [spinner startAnimating];
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:spinner];
@@ -313,6 +320,7 @@
         [manager POST:votesURL parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSLog(@"operation: %@", operation);
             NSLog(@"responseObject: %@", responseObject);
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
             if (sender != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.navigationItem.rightBarButtonItem = sender;
@@ -333,6 +341,7 @@
             NSLog(@"operation: %@", operation);
             NSLog(@"operation: %@", operation.responseString);
             NSLog(@"Error: %@", error);
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
             if (sender != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.navigationItem.rightBarButtonItem = sender;

@@ -35,6 +35,7 @@
 {
     [super viewDidLoad];
     [self.friendNameTextField becomeFirstResponder];
+    self.friendNameTextField.delegate = self;
     self.friendNameTextField.keyboardType = UIKeyboardTypeASCIICapable;
 	// Do any additional setup after loading the view.
     [CoreDataHelper sharedDatabase:^(UIManagedDocument *database) {
@@ -42,6 +43,12 @@
         self.document = database;
         self.managedObjectContext = database.managedObjectContext;
     }];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 - (IBAction)search:(id)sender {

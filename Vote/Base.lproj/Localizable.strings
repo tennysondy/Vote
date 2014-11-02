@@ -8,4 +8,5 @@
 "ADD_FRIEND_REQUEST" = "%@希望添加你为好友";
 "AGREE_ADD_FRIEND" = "%@同意了你的好友请求";
 "REFUSE_ADD_FRIEND" = "%@拒绝了你的好友请求";
-"VOTE_NOTIFICATION" = "%@发起了一个活动，向你送来拜帖";
+"VOTE_NOTIFICATION" = "%@发起了一个活动，请查看";
+"NEW_VOTE_NOTIFICATION" = "您参与的活动有更新，请查看";

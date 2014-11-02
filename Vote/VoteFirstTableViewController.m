@@ -20,6 +20,7 @@
 #import "FailedDeletedFriends+Helper.h"
 #import "VoteCityTableViewController.h"
 #import "City.h"
+#import "LoadingIconImageView.h"
 
 @interface VoteFirstTableViewController () <NSFetchedResultsControllerDelegate, CLLocationManagerDelegate, UIAlertViewDelegate>
 
@@ -123,6 +124,8 @@
         self.leftBarButtonItem.title = city;
     } else {
         self.leftBarButtonItem.title = @"北京";
+        [ud setObject:city forKey:SERVER_CITY];
+        [ud synchronize];
     }
     //设置城市下拉按钮位置和大小
     [self changeBtnFrameByCity:self.leftBarButtonItem.title];
@@ -134,9 +137,8 @@
     self.AFManager.operationQueue.maxConcurrentOperationCount = 1;
     self.AFManager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     self.AFManager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
-    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 24, 24)];
+    LoadingIconImageView *activityIndicator = [[LoadingIconImageView alloc] initWithFrame:CGRectMake(0, 0, 24, 24)];
     activityIndicator.center = CGPointMake(self.view.center.x, self.view.center.y - 64);
-    [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     [self.view addSubview:activityIndicator];
     [activityIndicator startAnimating];
     [CoreDataHelper sharedDatabase:^(UIManagedDocument *database) {
@@ -207,6 +209,9 @@
     [super viewWillDisappear:animated];
     NSLog(@"will disappear");
     [self.locationManager stopUpdatingLocation];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    //清除badge
+    [[[[self.tabBarController viewControllers] objectAtIndex:0] tabBarItem] setBadgeValue:nil];
     
 }
 
@@ -220,21 +225,38 @@
 
 - (void)setupLocationManager
 {
+    if ([CLLocationManager locationServicesEnabled] == NO || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied) {
+        NSLog(@"user doesn't enable the location service!");
+        UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"无法使用定位服务" message:@"请在手机[设置]->[隐私]->[定位服务]中打开并允许找乐儿使用定位服务，当前默认所在城市为北京，如不相同请手动修改" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        //更新间隔为5分钟
+        NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+        NSDate *lastCheck = [ud objectForKey:LOCATION_SERVICE_CHECK_TIMESTAMP];
+        if (lastCheck == nil) {
+            [av show];
+            [ud setObject:[NSDate date] forKey:LOCATION_SERVICE_CHECK_TIMESTAMP];
+            [ud synchronize];
+        } else {
+            NSTimeInterval sec = [lastCheck timeIntervalSinceNow];
+            if (fabs(sec) > 300.0) {
+                [av show];
+                [ud setObject:[NSDate date] forKey:LOCATION_SERVICE_CHECK_TIMESTAMP];
+                [ud synchronize];
+            } else {
+                
+            }
+        }
+        return;
+    }
+    
     if (self.locationManager == nil) {
         self.locationManager = [[CLLocationManager alloc] init];
-        
-        if ([CLLocationManager locationServicesEnabled]) {
-            self.locationManager.delegate = self;
-            self.locationManager.distanceFilter = 100.0;
-            self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
-            self.currentLocation = [[CLLocation alloc] init];
-        } else {
-            NSLog(@"user doesn't enable the location service!");
-        }
-        
+        self.locationManager.delegate = self;
+        self.locationManager.distanceFilter = 100.0;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+        self.currentLocation = [[CLLocation alloc] init];
     }
     if (self.locationManager != nil) {
-        //更新间隔至少为5分钟
+        //更新间隔为5分钟
         NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
         NSDate *lastUpdate = [ud objectForKey:CITY_UPDATE_TIMESTAMP];
         if (lastUpdate == nil) {
@@ -244,10 +266,11 @@
             if (fabs(sec) > 300.0) {
                 [self.locationManager startUpdatingLocation];
             } else {
-
+                
             }
         }
     }
+
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations

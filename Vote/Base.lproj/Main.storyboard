@@ -916,7 +916,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="More Business" id="lDc-tg-unU" customClass="VoteOptionsAddrListTableViewCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="More Business" id="lDc-tg-unU">
                                 <rect key="frame" x="0.0" y="130" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lDc-tg-unU" id="FUU-xd-9Eu">
@@ -1457,7 +1457,7 @@
                                     <constraint firstAttribute="width" constant="280" id="KEG-m2-uiL"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -1756,7 +1756,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fu7-YR-Hpz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1735" y="2617"/>
+            <point key="canvasLocation" x="1717" y="3113"/>
         </scene>
         <!--Vote Change Screen Name View Controller-->
         <scene sceneID="mPs-YM-H5J">
@@ -2314,8 +2314,8 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="dMk-hL-prk"/>
-        <segue reference="LgQ-pj-KCJ"/>
         <segue reference="lM6-H8-JT8"/>
+        <segue reference="eHp-Bb-53y"/>
+        <segue reference="LgQ-pj-KCJ"/>
     </inferredMetricsTieBreakers>
 </document>

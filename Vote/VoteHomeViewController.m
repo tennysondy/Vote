@@ -74,8 +74,7 @@
     [[UINavigationBar appearance] setBarTintColor:UIColorFromRGB(0x1D66F1)];
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
 
-    [[UIBarButtonItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor whiteColor], NSFontAttributeName:[UIFont systemFontOfSize:18.0f]} forState:UIControlStateNormal];
-    
+    [[UIBarButtonItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor whiteColor], NSFontAttributeName:[UIFont systemFontOfSize:17.0f]} forState:UIControlStateNormal];
     [self loadCookies];
 
 }

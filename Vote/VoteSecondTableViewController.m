@@ -117,6 +117,14 @@
     }
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    //清除badge
+    [[[[self.tabBarController viewControllers] objectAtIndex:1] tabBarItem] setBadgeValue:nil];
+}
+
 - (void)fetchDataFromServer
 {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
@@ -138,6 +146,9 @@
         }
         //1. 和数据库比对，如果存在并需要修改，则修改，不存在则创建，如果不存在创建新的
         [Friends updateDatabaseWithData:[responseObject objectForKey:SERVER_FRIENDS_ARRAY] withContext:context withQueue:queue];
+        [self.document saveToURL:self.document.fileURL forSaveOperation:UIDocumentSaveForOverwriting completionHandler:^(BOOL success) {
+            [self.tableView reloadData];
+        }];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"connect network failure in second table view!");

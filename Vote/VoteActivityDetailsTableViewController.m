@@ -17,6 +17,7 @@
 #import "VoteLookUpParticipantsViewController.h"
 #import "NSString+NSStringHelper.h"
 
+
 @interface VoteActivityDetailsTableViewController () <NSFetchedResultsControllerDelegate, UIActionSheetDelegate>
 {
     NSUInteger votersTotalNum;
@@ -105,23 +106,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 134, 30)];
-    //titleView.layer.borderColor = [UIColor whiteColor].CGColor;
-    //titleView.layer.borderWidth = 1.0;
-    titleView.backgroundColor = [UIColor clearColor];
-    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 3, 24, 24)];
-    [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
-    [activityIndicator startAnimating];
-    [titleView addSubview:activityIndicator];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(30, 0, 105, 30)];
-    label.text = @"更新数据中...";
-    label.textColor = [UIColor whiteColor];
-    label.font = [UIFont boldSystemFontOfSize:17.0f];
-    //label.layer.borderColor = [UIColor whiteColor].CGColor;
-    //label.layer.borderWidth = 1.0;
-    [titleView addSubview:label];
-    self.navigationItem.titleView = titleView;
     
     [CoreDataHelper sharedDatabase:^(UIManagedDocument *database) {
         self.document = database;
@@ -198,10 +182,43 @@
     [super viewWillDisappear:animated];
     [self.timer invalidate];
     //[self.uTimer invalidate];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+#pragma mark - Network functions
+
+- (void)startLoadingView
+{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 134, 30)];
+    //titleView.layer.borderColor = [UIColor whiteColor].CGColor;
+    //titleView.layer.borderWidth = 1.0;
+    titleView.backgroundColor = [UIColor clearColor];
+    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 3, 24, 24)];
+    [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+    [activityIndicator startAnimating];
+    [titleView addSubview:activityIndicator];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(30, 0, 105, 30)];
+    label.text = @"更新数据中...";
+    label.textColor = [UIColor whiteColor];
+    label.font = [UIFont boldSystemFontOfSize:17.0f];
+    //label.layer.borderColor = [UIColor whiteColor].CGColor;
+    //label.layer.borderWidth = 1.0;
+    [titleView addSubview:label];
+    self.navigationItem.titleView = titleView;
+}
+
+- (void)stopLoadingView
+{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.navigationItem.titleView = nil;
+    });
 }
 
 - (void)fetchVotesInfoFromServer
 {
+    [self startLoadingView];
     NSString *votesInfoURL = [[NSString alloc] initWithFormat:@"http://115.28.228.41/vote/get_vote_detail.php"];
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSString *username = [ud objectForKey:USERNAME];
@@ -210,33 +227,40 @@
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
     [manager GET:votesInfoURL parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.navigationItem.titleView = nil;
-        });
         NSLog(@"operation: %@", operation);
         NSLog(@"responseObject: %@", responseObject);
-        //1. 和数据库比对，如果存在并需要修改，则修改，不存在则创建，如果不存在创建新的
-        NSManagedObjectContext *context = self.managedObjectContext;
-        if (context) {
-            [context performBlock:^{
-                [VotesInfo updateDatabaseWithDetails:(NSDictionary *)responseObject withContext:self.managedObjectContext withQueue:self.imagesDownloadQueue];
-                [context save:NULL];
-                memset(timerCount, 0, sizeof(timerCount));
-                [self.tableView reloadData];
-                NSLog(@"responseObject: %lu, %lu, %lu", (unsigned long)timerCount[0], (unsigned long)timerCount[1], (unsigned long)timerCount[2]);
-            }];
+        [self stopLoadingView];
+        NSLog(@"vote update tag: %@", self.aVote.voteUpdateTag);
+        NSNumber *voteUpdateTag;
+        if ( [responseObject objectForKey:SERVER_VOTE_VOTE_TIMESTAMP] != nil && (NSNull *)[responseObject objectForKey:SERVER_VOTE_VOTE_TIMESTAMP] != [NSNull null] ) {
+            voteUpdateTag = [responseObject objectForKey:SERVER_VOTE_VOTE_TIMESTAMP];
+            if ([self.aVote.voteUpdateTag isEqualToNumber:voteUpdateTag] && [self.aVote.voteUpdateFlag boolValue] == NO ) {
+                return;
+            }
         }
+        //1. 和数据库比对，如果存在并需要修改，则修改
+        //如果不一样，则延迟1秒刷新数据，等待tableview柱状条动画完成
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (self.managedObjectContext) {
+                [self.managedObjectContext performBlock:^{
+                    [VotesInfo updateDatabaseWithDetails:(NSDictionary *)responseObject withContext:self.managedObjectContext withQueue:self.imagesDownloadQueue];
+                    [self.managedObjectContext save:NULL];
+                    /*
+                     memset(timerCount, 0, sizeof(timerCount));
+                     [self.tableView reloadData];
+                     NSLog(@"responseObject: %lu, %lu, %lu", (unsigned long)timerCount[0], (unsigned long)timerCount[1], (unsigned long)timerCount[2]);
+                     */
+                }];
+            }
+        });
+
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"connect network failure in first table view!");
         NSLog(@"operation: %@", operation);
         NSLog(@"operation: %@", operation.responseString);
         NSLog(@"Error: %@", error);
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.navigationItem.titleView = nil;
-        });
+        [self stopLoadingView];
     }];
 }
 
@@ -580,9 +604,15 @@
         Options *aOption = [self.fetchedResultsController objectAtIndexPath:self.selectedIndexPath];
         if ([aOption.businessID integerValue] == BUSINESS_ID_OF_NO_ADDR) {
             //
-            UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"提示" message:@"该选项仅有标题信息" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-            [av show];
-            //[tableView deselectRowAtIndexPath:indexPath animated:NO];
+            UIActionSheet *myActionSheet;
+            if ([self.aVote.anonymous boolValue] == YES) {
+                UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"提示" message:@"该选项仅有标题信息" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+                [av show];
+            } else {
+                myActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"查看选项投票人", nil];
+                myActionSheet.tag = ADTVC_ACTION_SHEET_NO_ADDR_TAG;
+                [myActionSheet showInView:self.view];
+            }
         } else {
             UIActionSheet *myActionSheet;
             if ([self.aVote.anonymous boolValue] == YES) {
@@ -590,6 +620,7 @@
             } else {
                 myActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"查看选项信息", @"查看选项投票人", nil];
             }
+            myActionSheet.tag = ADTVC_ACTION_SHEET_NORMAL_TAG;
             [myActionSheet showInView:self.view];
         }
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -600,20 +631,32 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == actionSheet.cancelButtonIndex) {
-        //[self.tableView deselectRowAtIndexPath:self.selectedIndexPath animated:YES];
         NSLog(@"取消");
     } else {
-        switch (buttonIndex) {
-            case 0:
-                [self performSegueWithIdentifier:@"Option Details" sender:self];
-                break;
-            case 1:
-                //查看投票人信息
-                [self performSegueWithIdentifier:@"Look Up Voters" sender:self];
-                break;
-            default:
-                break;
+        if (actionSheet.tag == ADTVC_ACTION_SHEET_NORMAL_TAG) {
+            switch (buttonIndex) {
+                case 0:
+                    //查看选项信息
+                    [self performSegueWithIdentifier:@"Option Details" sender:self];
+                    break;
+                case 1:
+                    //查看投票人信息
+                    [self performSegueWithIdentifier:@"Look Up Voters" sender:self];
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            switch (buttonIndex) {
+                case 0:
+                    //查看投票人信息
+                    [self performSegueWithIdentifier:@"Look Up Voters" sender:self];
+                    break;
+                default:
+                    break;
+            }
         }
+
     }
 }
 

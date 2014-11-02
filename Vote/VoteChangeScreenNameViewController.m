@@ -34,6 +34,12 @@
     [self.theNewScreenname becomeFirstResponder];
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
 - (IBAction)save:(id)sender {
     //连接网络提示
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;

@@ -56,11 +56,11 @@
             [self.contentView addSubview:self.distance];
         }
         
-        if (self.separator == nil) {
+        if (self.cellSeparator == nil) {
             CGRect rect = CGRectMake(0, OALTVC_CELL_HEIGHT - 0.5, BOUNDS_WIDTH([UIScreen mainScreen]), 0.5);
-            self.separator = [[UIView alloc] initWithFrame:rect];
-            self.separator.backgroundColor = SEPARATOR_COLOR;
-            [self.contentView addSubview:self.separator];
+            self.cellSeparator = [[UIView alloc] initWithFrame:rect];
+            self.cellSeparator.backgroundColor = SEPARATOR_COLOR;
+            [self.contentView addSubview:self.cellSeparator];
         }
 
     }
@@ -111,10 +111,11 @@
         [self.contentView addSubview:self.distance];
     }
     
-    if (self.separator == nil) {
-        CGRect rect = CGRectMake(0, self.frame.size.height - 0.5, BOUNDS_WIDTH([UIScreen mainScreen]), 0.5);
-        self.separator = [[UIView alloc] initWithFrame:rect];
-        [self.contentView addSubview:self.separator];
+    if (self.cellSeparator == nil) {
+        CGRect rect = CGRectMake(0, OALTVC_CELL_HEIGHT - 0.5, BOUNDS_WIDTH([UIScreen mainScreen]), 0.5);
+        self.cellSeparator = [[UIView alloc] initWithFrame:rect];
+        self.cellSeparator.backgroundColor = SEPARATOR_COLOR;
+        [self.contentView addSubview:self.cellSeparator];
     }
 }
 

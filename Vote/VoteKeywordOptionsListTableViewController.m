@@ -53,9 +53,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     self.sortType = [[NSDictionary alloc] initWithObjectsAndKeys:@7, @"距离最近", @2, @"星级最高", @6, @"评论最多", @8, @"人均最低", @5, @"服务最好", @4, @"环境最优", nil];
     [self getDataFromServerOfLoadMore:NO andRefreshAll:YES];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 #pragma mark - Network functions
@@ -68,7 +74,7 @@
     UIActivityIndicatorView *activityIndicator;
     if ([self.view viewWithTag:KOLTVC_LOADING_VIEW_TAG] == nil) {
         loadingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 120, 120)];
-        loadingView.center = self.view.center;
+        loadingView.center = CGPointMake(self.view.center.x, self.view.center.y - 64);
         loadingView.backgroundColor = [UIColor blackColor];
         loadingView.alpha = 0.6;
         loadingView.tag = KOLTVC_LOADING_VIEW_TAG;
@@ -196,6 +202,7 @@
     }
     [self.tableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationFade];
     
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -228,27 +235,36 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    VoteOptionsAddrListTableViewCell *cell;
     if (indexPath.row == [self.businessList count]) {
-    cell = [tableView dequeueReusableCellWithIdentifier:@"More Business" forIndexPath:indexPath];
-    cell.textLabel.textAlignment = NSTextAlignmentCenter;
-    if (noMoreList == NO) {
-        cell.textLabel.text = @"加载更多";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"More Business" forIndexPath:indexPath];
+        cell.textLabel.textAlignment = NSTextAlignmentCenter;
+        if (noMoreList == NO) {
+            cell.textLabel.text = @"加载更多";
+        } else {
+            cell.textLabel.text = @"已加载到最后一条";
+        }
+        if ([cell.contentView viewWithTag:3000] == nil) {
+            UIView *uv = [[UIView alloc] initWithFrame:CGRectMake(0, FRAME_HEIGHT(cell)-0.5, FRAME_WIDTH(cell), 0.5)];
+            uv.alpha = 0.3;
+            uv.tag = 3000;
+            uv.backgroundColor = [UIColor lightGrayColor];
+            [cell.contentView addSubview:uv];
+        }
+        return cell;
     } else {
-        cell.textLabel.text = @"已加载到最后一条";
-    }
-
-    } else {
+        VoteOptionsAddrListTableViewCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:@"Business List" forIndexPath:indexPath];
         [self configureCell:cell forRowAtIndexPath:indexPath];
+        return cell;
 
     }
-    return cell;
 }
 
 - (void)configureCell:(VoteOptionsAddrListTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    BOOL hasCoupon = [[[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_HAS_COUPON] boolValue];
+    BOOL hasDeal = [[[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_HAS_DEAL] boolValue];
+    NSLog(@"hasCoupon: %d, hasDeal: %d", hasCoupon, hasDeal);
     //商户图片
     NSString *photoURL = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_S_PHOTO_URL];
     NSURLRequest *photoRequest = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:photoURL]];
@@ -262,6 +278,23 @@
     NSString *business = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_NAME];
     NSString *branchName = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_BRANCH_NAME];
     cell.businessName.text = [business stringByAppendingFormat:@"(%@)", branchName];
+    //优惠券和团购
+    if (hasCoupon && hasDeal) {
+        [cell modifyBusinessNameWidth:OALTVC_BUSINESS_NAME_WIDTH2];
+        cell.firstView.image = [UIImage imageNamed:@"tuan.png"];
+        cell.secondView.image = [UIImage imageNamed:@"coupon.png"];
+    } else if (hasCoupon || hasDeal) {
+        [cell modifyBusinessNameWidth:OALTVC_BUSINESS_NAME_WIDTH1];
+        if (hasCoupon) {
+            cell.secondView.image = [UIImage imageNamed:@"coupon.png"];
+        } else {
+            cell.secondView.image = [UIImage imageNamed:@"tuan.png"];
+        }
+    } else {
+        if (FRAME_WIDTH(cell.businessName) != OALTVC_BUSINESS_NAME_WIDTH) {
+            [cell modifyBusinessNameWidth:OALTVC_BUSINESS_NAME_WIDTH];
+        }
+    }
     //商户评级
     NSString *ratingURL = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_RATING_IMAGE_URL];
     NSURLRequest *ratingRequest = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:ratingURL]];

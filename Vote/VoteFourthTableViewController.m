@@ -128,18 +128,19 @@
         case MFMailComposeResultCancelled:
             NSLog(@"Mail send canceled…");
             break;
-            
         case MFMailComposeResultSaved:
             NSLog(@"Mail saved…");
             break;
-            
         case MFMailComposeResultSent:
+        {
             NSLog(@"Mail sent…");
             break;
-            
+        }
         case MFMailComposeResultFailed:
+        {
             NSLog(@"Mail send errored: %@…", [error localizedDescription]);
             break;
+        }
         default:
             break;
     }

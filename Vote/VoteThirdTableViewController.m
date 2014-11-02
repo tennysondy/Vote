@@ -11,6 +11,7 @@
 #import "VoteHotListTableViewCell.h"
 #import "VoteHotDetailsTableViewController.h"
 #import "VoteCityTableViewController.h"
+#import "MJRefresh.h"
 
 @interface VoteThirdTableViewController ()
 {
@@ -72,8 +73,21 @@
     self.startIndex = @0;
     noMore = NO;
     [self fetchDataFromServerLoadMore:NO withSender:nil withCity:self.city];
+    //设定下拉刷新
+    [self.tableView addHeaderWithTarget:self action:@selector(headerRereshing)];
+    //一进入程序则马上刷新
+    [self.tableView headerBeginRefreshing];
+    //添加上拉刷新
+    [self.tableView addFooterWithTarget:self action:@selector(footerRereshing)];
     
+    // 设置文字(也可以不设置,默认的文字在MJRefreshConst中修改)
+    self.tableView.headerPullToRefreshText = @"下拉可以刷新";
+    self.tableView.headerReleaseToRefreshText = @"松开马上刷新";
+    self.tableView.headerRefreshingText = @"正在努力刷新中,请稍后...";
     
+    self.tableView.footerPullToRefreshText = @"上拉可以加载更多数据";
+    self.tableView.footerReleaseToRefreshText = @"松开马上加载更多数据";
+    self.tableView.footerRefreshingText = @"正在努力加载中,请稍后...";
 }
 
 - (void)dropDown:(id)sender
@@ -83,7 +97,14 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     [self.dropDownBtn setHidden:NO];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -97,7 +118,7 @@
 - (void)fetchDataFromServerLoadMore:(BOOL)loadMore withSender:(id)sender withCity:(NSString *)city
 {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    UIActivityIndicatorView *activityIndicator;
+    //UIActivityIndicatorView *activityIndicator;
     if (loadMore == YES) {
         NSUInteger tmpCount = [self.count unsignedIntegerValue];
         NSUInteger tmpStartIndex = [self.startIndex unsignedIntegerValue];
@@ -111,15 +132,18 @@
             self.loadingPrompt.font = [UIFont boldSystemFontOfSize:15.0];
             [self.view addSubview:self.loadingPrompt];
         }
+        /*
         self.loadingPrompt.text = @"正在加载...";
         activityIndicator = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 0, 24, 24)];
         activityIndicator.center = CGPointMake(self.view.center.x, self.view.center.y - 44);
         [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
         [self.view addSubview:activityIndicator];
         [activityIndicator startAnimating];
+         */
         self.startIndex = @0;
         noMore = NO;
     }
+     
     NSString *url = [[NSString alloc] initWithFormat:@"http://115.28.228.41/vote/get_vote_by_order.php"];
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSString *username = [[NSString alloc] initWithString:[ud objectForKey:USERNAME]];
@@ -132,9 +156,11 @@
         NSLog(@"operation: %@", operation);
         NSLog(@"responseObject: %@", responseObject);
         [self.loadingPrompt removeFromSuperview];
+        self.loadingPrompt = nil;
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        [activityIndicator stopAnimating];
-        [activityIndicator removeFromSuperview];
+        //[activityIndicator stopAnimating];
+        //[activityIndicator removeFromSuperview];
+        
         if (sender != nil) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.navigationItem.rightBarButtonItem = sender;
@@ -153,12 +179,16 @@
                 self.hotList = nil;
             }
             [self.tableView reloadData];
+            //下拉刷新停止
+            [self.tableView headerEndRefreshing];
         } else {
             if ([self.curHotList count] > 0) {
                 [self.hotList addObjectsFromArray:self.curHotList];
                 [self performSelectorOnMainThread:@selector(appendTableWith) withObject:nil waitUntilDone:NO];
             } else {
                 noMore = YES;
+                [self.tableView footerEndRefreshing];
+                [self.tableView removeFooter];
                 [self.tableView reloadData];
             }
         }
@@ -175,10 +205,12 @@
         }
         if (loadMore == NO) {
             self.loadingPrompt.text = @"加载失败";
-            [activityIndicator stopAnimating];
-            [activityIndicator removeFromSuperview];
+            //[activityIndicator stopAnimating];
+            //[activityIndicator removeFromSuperview];
         }
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        [self.tableView headerEndRefreshing];
+        [self.tableView footerEndRefreshing];
     }];
     
 }
@@ -192,7 +224,7 @@
         [insertIndexPaths addObject:newPath];
     }
     [self.tableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationFade];
-    
+    [self.tableView footerEndRefreshing];
 }
 
 
@@ -206,6 +238,12 @@
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     [spinner startAnimating];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:spinner];
+    if (noMore == YES) {
+        [self.tableView addFooterWithTarget:self action:@selector(footerRereshing)];
+        self.tableView.footerPullToRefreshText = @"上拉可以加载更多数据";
+        self.tableView.footerReleaseToRefreshText = @"松开马上加载更多数据";
+        self.tableView.footerRefreshingText = @"正在努力加载中,请稍后...";
+    }
     [self fetchDataFromServerLoadMore:NO withSender:sender withCity:self.city];
 }
 
@@ -214,6 +252,23 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - MJ refresh method
+- (void)headerRereshing
+{
+    if (noMore == YES) {
+        [self.tableView addFooterWithTarget:self action:@selector(footerRereshing)];
+        self.tableView.footerPullToRefreshText = @"上拉可以加载更多数据";
+        self.tableView.footerReleaseToRefreshText = @"松开马上加载更多数据";
+        self.tableView.footerRefreshingText = @"正在努力加载中,请稍后...";
+    }
+    [self fetchDataFromServerLoadMore:NO withSender:nil withCity:self.city];
+}
+
+- (void)footerRereshing
+{
+    [self fetchDataFromServerLoadMore:YES withSender:nil withCity:self.city];
 }
 
 #pragma mark - Table view data source
@@ -228,7 +283,7 @@
 {
     // Return the number of rows in the section.
     if ([self.hotList count] > 0) {
-        return [self.hotList count] + 1;
+        return [self.hotList count];
     } else {
         return 0;
     }
