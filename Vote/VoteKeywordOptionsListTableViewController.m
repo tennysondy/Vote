@@ -56,6 +56,22 @@
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     self.sortType = [[NSDictionary alloc] initWithObjectsAndKeys:@7, @"距离最近", @2, @"星级最高", @6, @"评论最多", @8, @"人均最低", @5, @"服务最好", @4, @"环境最优", nil];
     [self getDataFromServerOfLoadMore:NO andRefreshAll:YES];
+    
+    //建立点评网logo
+    UIImageView *dpImageView = [[UIImageView alloc] initWithFrame:CGRectMake(98, 3, 12, 12)];
+    dpImageView.image = [UIImage imageNamed:@"dpLogo.png"];
+    dpImageView.layer.cornerRadius = 2.0;
+    dpImageView.clipsToBounds = YES;
+    UILabel *dpLabel = [[UILabel alloc] initWithFrame:CGRectMake(114, 3, 108, 12)];
+    dpLabel.text = @"数据来自大众点评网";
+    dpLabel.textColor = [UIColor whiteColor];
+    dpLabel.font = [UIFont systemFontOfSize:12.0f];
+    CGRect rect = [UIScreen mainScreen].bounds;
+    UIView *dpLogo = [[UIView alloc] initWithFrame:CGRectMake(0, rect.size.height-NAVIGATION_BAR_HEIGHT-18, rect.size.width, 18)];
+    dpLogo.backgroundColor = [UIColor blackColor];
+    dpLogo.alpha = 0.6;
+    [dpLogo addSubview:dpImageView];
+    [dpLogo addSubview:dpLabel];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -222,7 +238,12 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [self.businessList count] + 1;
+    if ([self.businessList count] > 0) {
+        return [self.businessList count] + 1;
+    }
+    
+    return 0;
+    
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -245,9 +266,8 @@
         }
         if ([cell.contentView viewWithTag:3000] == nil) {
             UIView *uv = [[UIView alloc] initWithFrame:CGRectMake(0, FRAME_HEIGHT(cell)-0.5, FRAME_WIDTH(cell), 0.5)];
-            uv.alpha = 0.3;
             uv.tag = 3000;
-            uv.backgroundColor = [UIColor lightGrayColor];
+            uv.backgroundColor = SEPARATOR_COLOR;
             [cell.contentView addSubview:uv];
         }
         return cell;
@@ -277,7 +297,11 @@
     //商户名字
     NSString *business = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_NAME];
     NSString *branchName = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_BRANCH_NAME];
-    cell.businessName.text = [business stringByAppendingFormat:@"(%@)", branchName];
+    if ([branchName isEqualToString:@""]) {
+        cell.businessName.text = business;
+    } else {
+        cell.businessName.text = [business stringByAppendingFormat:@"(%@)", branchName];
+    }
     //优惠券和团购
     if (hasCoupon && hasDeal) {
         [cell modifyBusinessNameWidth:OALTVC_BUSINESS_NAME_WIDTH2];

@@ -19,8 +19,10 @@
 + (VotesInfo *)fetchVotesWithVoteID:(NSNumber *)voteId withContext:(NSManagedObjectContext *)context
 {
     VotesInfo *aVote = nil;
-
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"voteID == %@", voteId];
+    //get login username
+    NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+    NSString *username = [ud stringForKey:USERNAME];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whoseVote.username == %@) AND (voteID == %@)", username, voteId];
     NSArray *results = [CoreDataHelper searchObjectsForEntity:VOTES_INFO withPredicate:predicate andSortKey:nil andSortAscending:YES andContext:context];
     if ([results count] == 1) {
         aVote = [results firstObject];
@@ -61,6 +63,7 @@
     }
 }
 
+//创建新的投票活动
 + (void)insertVotesInfoToDatabaseWithData:(NSDictionary *)data withManagedObjectContext:(NSManagedObjectContext *)context
 {
     NSLog(@"data: %@",data);
@@ -86,15 +89,11 @@
     if ( [data objectForKey:SERVER_VOTE_ORGANIZER_SCREENNAME] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_ORGANIZER_SCREENNAME] != [NSNull null] ) {
         aVote.organizerSceenName = [data objectForKey:SERVER_VOTE_ORGANIZER_SCREENNAME];
     }
-    if ( [data objectForKey:SERVER_VOTE_PARTICIPANTS] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_PARTICIPANTS] != [NSNull null] ) {
-        aVote.participants = [NSMutableArray arrayWithArray:[data objectForKey:SERVER_VOTE_PARTICIPANTS]];
-        NSLog(@"paticipants:%@", aVote.participants);
-    }
     if ( [data objectForKey:SERVER_VOTE_END_TIME] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_END_TIME] != [NSNull null] ) {
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:[[data objectForKey:SERVER_VOTE_END_TIME] doubleValue]];
         aVote.endTime = date;
         NSDate *now = [NSDate date];
-        if ([aVote.endTime earlierDate:now] == aVote.endTime) {
+        if ([[aVote.endTime earlierDate:now] isEqualToDate:aVote.endTime]) {
             aVote.isEnd = [NSNumber numberWithBool:YES];
         } else {
             aVote.isEnd = [NSNumber numberWithBool:NO];
@@ -115,6 +114,8 @@
     aVote.basicUpdateFlag = [NSNumber numberWithBool:YES];
     aVote.voteUpdateFlag = [NSNumber numberWithBool:YES];
     aVote.draft = [NSNumber numberWithBool:NO];
+    aVote.unreadMsgFlag = [NSNumber numberWithBool:YES];
+    /*
     //创建用户投票设置
     NSNumber *notification;
     NSNumber *deleteForever;
@@ -125,18 +126,11 @@
         deleteForever= [data objectForKey:SERVER_VOTE_DELETE_FOREVER];
     }
     [VotesUserSetting insertVoteUserSetting:aVote.voteID withContext:context notificationFlag:[notification boolValue] deleteForever:[deleteForever boolValue]];
+     */
 }
 
 + (void)modifyVotesInfo:(VotesInfo *)aVote withData:(NSDictionary *)data withManagedObjectContext:(NSManagedObjectContext *)context
 {
-    //这2个参数和时间戳无关，一直需要更新
-    if ( [data objectForKey:SERVER_VOTE_ORGANIZER_SCREENNAME] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_ORGANIZER_SCREENNAME] != [NSNull null] ) {
-        aVote.organizerSceenName = [data objectForKey:SERVER_VOTE_ORGANIZER_SCREENNAME];
-    }
-    if ( [data objectForKey:SERVER_VOTE_PARTICIPANTS] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_PARTICIPANTS] != [NSNull null] ) {
-        aVote.participants = [NSMutableArray arrayWithArray:[data objectForKey:SERVER_VOTE_PARTICIPANTS]];
-        NSLog(@"paticipants:%@", aVote.participants);
-    }
     
     NSNumber *basicUpdateTag;
     NSNumber *voteUpdateTag;
@@ -153,7 +147,7 @@
         NSLog(@"timestamp error!");
         return;
     }
-    if (![aVote.basicUpdateTag isEqualToNumber:basicUpdateTag]) {
+    if (![aVote.basicUpdateTag isEqualToNumber:basicUpdateTag] || [VotesInfo checkBasicInfoExistedOfVote:aVote] == NO) {
         //当有更新发生，设置updateFlag
         aVote.basicUpdateFlag = [NSNumber numberWithBool:YES];
         //简单更新vote数据
@@ -178,7 +172,7 @@
             NSDate *date = [NSDate dateWithTimeIntervalSince1970:[[data objectForKey:SERVER_VOTE_END_TIME] doubleValue]];
             aVote.endTime = date;
             NSDate *now = [NSDate date];
-            if ([aVote.endTime earlierDate:now] == aVote.endTime) {
+            if ([[aVote.endTime earlierDate:now] isEqualToDate:aVote.endTime]) {
                 aVote.isEnd = [NSNumber numberWithBool:YES];
             } else {
                 aVote.isEnd = [NSNumber numberWithBool:NO];
@@ -187,6 +181,9 @@
         if ([data objectForKey:SERVER_VOTE_BASIC_TIMESTAMP] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_BASIC_TIMESTAMP] != [NSNull null] ) {
             aVote.basicUpdateTag = [data objectForKey:SERVER_VOTE_BASIC_TIMESTAMP];
         }
+        if ( [data objectForKey:SERVER_VOTE_ORGANIZER_SCREENNAME] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_ORGANIZER_SCREENNAME] != [NSNull null] ) {
+            aVote.organizerSceenName = [data objectForKey:SERVER_VOTE_ORGANIZER_SCREENNAME];
+        }
         if ( [data objectForKey:SERVER_VOTE_ANONYMOUS_FLAG] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_ANONYMOUS_FLAG] != [NSNull null] ) {
             aVote.anonymous = [data objectForKey:SERVER_VOTE_ANONYMOUS_FLAG];
         }
@@ -194,6 +191,7 @@
             aVote.thePublic = [data objectForKey:SERVER_VOTE_THE_PUBLIC_FLAG];
         }
         //修改用户投票设置
+        /*
         NSNumber *notification;
         NSNumber *deleteForever;
         if ( [data objectForKey:SERVER_VOTE_NOTIFICATION] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_NOTIFICATION] != [NSNull null] ) {
@@ -203,12 +201,14 @@
             deleteForever= [data objectForKey:SERVER_VOTE_DELETE_FOREVER];
         }
         [VotesUserSetting modifyVoteUserSetting:aVote.voteID withContext:context notificationFlag:[notification boolValue] deleteForever:[deleteForever boolValue]];
+         */
     }
     
     if (![aVote.voteUpdateTag isEqualToNumber:voteUpdateTag]) {
         //当有更新发生，设置updateFlag
         aVote.voteUpdateTag = voteUpdateTag;
         aVote.voteUpdateFlag = [NSNumber numberWithBool:YES];
+        aVote.unreadMsgFlag = [NSNumber numberWithBool:YES];
     }
 
 }
@@ -231,7 +231,7 @@
     }
 }
 
-//当创建新的投票时使用
+//当用户自己创建新的投票时使用
 + (void)insertVotesInfoToDatabaseWithDetails:(NSDictionary *)data withManagedObjectContext:(NSManagedObjectContext *)context withQueue:(NSOperationQueue *)queue
 {
     VotesInfo *aVote = [NSEntityDescription insertNewObjectForEntityForName:VOTES_INFO inManagedObjectContext:context];
@@ -263,7 +263,7 @@
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:[[data objectForKey:SERVER_VOTE_END_TIME] doubleValue]];
         aVote.endTime = date;
         NSDate *now = [NSDate date];
-        if ([aVote.endTime earlierDate:now] == aVote.endTime) {
+        if ([[aVote.endTime earlierDate:now] isEqualToDate:aVote.endTime]) {
             aVote.isEnd = [NSNumber numberWithBool:YES];
         } else {
             aVote.isEnd = [NSNumber numberWithBool:NO];
@@ -291,6 +291,8 @@
     aVote.basicUpdateFlag = [NSNumber numberWithBool:YES];
     aVote.voteUpdateFlag = [NSNumber numberWithBool:NO];
     aVote.draft = [NSNumber numberWithBool:NO];
+    aVote.unreadMsgFlag = [NSNumber numberWithBool:NO];
+    /*
     //创建用户投票设置
     NSNumber *notification;
     NSNumber *deleteForever;
@@ -301,6 +303,7 @@
         deleteForever = [data objectForKey:SERVER_VOTE_DELETE_FOREVER];
     }
     [VotesUserSetting insertVoteUserSetting:aVote.voteID withContext:context notificationFlag:[notification boolValue] deleteForever:[deleteForever boolValue]];
+     */
     //插入options
     if ( [data objectForKey:SERVER_VOTE_OPTIONS] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_OPTIONS] != [NSNull null] ) {
         NSArray *options = [NSArray arrayWithArray:(NSArray *)[data objectForKey:SERVER_VOTE_OPTIONS]];
@@ -332,11 +335,16 @@
         NSLog(@"timestamp error!");
         return;
     }
-    
+    NSLog(@"%@",aVote);
     if (![aVote.basicUpdateTag isEqualToNumber:basicUpdateTag]) {
         //当有更新发生，设置updateFlag
         aVote.basicUpdateTag = basicUpdateTag;
         aVote.basicUpdateFlag = [NSNumber numberWithBool:YES];
+    } else {
+        if ([VotesInfo checkBasicInfoExistedOfVote:aVote] == NO) {
+            aVote.basicUpdateTag = basicUpdateTag;
+            aVote.basicUpdateFlag = [NSNumber numberWithBool:YES];
+        }
     }
     if (![aVote.voteUpdateTag isEqualToNumber:voteUpdateTag]) {
         //当有更新发生，设置updateFlag
@@ -372,7 +380,7 @@
             NSDate *date = [NSDate dateWithTimeIntervalSince1970:[[data objectForKey:SERVER_VOTE_END_TIME] doubleValue]];
             aVote.endTime = date;
             NSDate *now = [NSDate date];
-            if ([aVote.endTime earlierDate:now] == aVote.endTime) {
+            if ([[aVote.endTime earlierDate:now] isEqualToDate:aVote.endTime]) {
                 aVote.isEnd = [NSNumber numberWithBool:YES];
             } else {
                 aVote.isEnd = [NSNumber numberWithBool:NO];
@@ -390,6 +398,7 @@
         if ( [data objectForKey:SERVER_VOTE_THE_PUBLIC_FLAG] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_THE_PUBLIC_FLAG] != [NSNull null] ) {
             aVote.thePublic = [data objectForKey:SERVER_VOTE_THE_PUBLIC_FLAG];
         }
+        /*
         //修改用户投票设置
         NSNumber *notification;
         NSNumber *deleteForever;
@@ -400,6 +409,7 @@
             deleteForever= [data objectForKey:SERVER_VOTE_DELETE_FOREVER];
         }
         [VotesUserSetting modifyVoteUserSetting:aVote.voteID withContext:context notificationFlag:[notification boolValue] deleteForever:[deleteForever boolValue]];
+         */
         
         //更新options
         if ( [data objectForKey:SERVER_VOTE_OPTIONS] != nil && (NSNull *)[data objectForKey:SERVER_VOTE_OPTIONS] != [NSNull null] ) {
@@ -420,6 +430,7 @@
         }
         
     }
+    aVote.unreadMsgFlag = [NSNumber numberWithBool:NO];
 }
 
 + (void)modifyVotesInfo:(VotesInfo *)aVote withAnonymousFlag:(BOOL)anonymousFlag withManagedObjectContext:(NSManagedObjectContext *)context
@@ -432,7 +443,7 @@
     //删除选项
     [Options deleteOptionsWithVoteId:aVote.voteID withManagedObjectContext:context];
     //删除投票用户设置
-    [VotesUserSetting deleteVoteUserSetting:aVote.voteID withContext:context];
+    //[VotesUserSetting deleteVoteUserSetting:aVote.voteID withContext:context];
     [context deleteObject:aVote];
     
 }
@@ -462,6 +473,33 @@
             [FailedDeletedVotes insertDeletedVotes:voteId withContext:context forever:forever];
         }];
     }];
+}
+
++ (BOOL)checkBasicInfoExistedOfVote:(VotesInfo *)aVote
+{
+    BOOL result = YES;
+    if (aVote.voteID == nil) {
+        result = NO;
+    }
+    if (aVote.title == nil) {
+        result = NO;
+    }
+    if (aVote.imageUrl == nil) {
+        result = NO;
+    }
+    if (aVote.startTime == nil) {
+        result = NO;
+    }
+    if (aVote.endTime == nil) {
+        result = NO;
+    }
+    if (aVote.anonymous == nil) {
+        result = NO;
+    }
+    if (aVote.thePublic == nil) {
+        result = NO;
+    }
+    return result;
 }
 
 @end

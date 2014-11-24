@@ -78,7 +78,7 @@
 }
 
 - (IBAction)back:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:NO];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)send:(id)sender {
@@ -143,6 +143,7 @@
         {
             [self.allCheck setObject:INPUT_WRONG forKey:SERVER_USERNAME];
             //提示用户名长度是否满足要求
+            //用户按退格键的场景
             if (string.length == 0) {
                 if (textField.text.length <= 3) {
                     self.usrnamePrompt.textColor = [UIColor redColor];
@@ -155,7 +156,7 @@
                 return YES;
             }
             //判断输入的是否只有英文和数字
-            NSString *textRegex = @"[a-zA-Z0-9]";
+            NSString *textRegex = @"^[a-zA-Z0-9]+$";
             NSPredicate *textPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", textRegex];
             if ([textPredicate evaluateWithObject:string]) {
                 self.usrnamePrompt.textColor = [UIColor blackColor];
@@ -166,12 +167,12 @@
                 return NO;
             }
             //判断长度是否符合要求
-            if (textField.text.length >= 16) {
+            if (textField.text.length + string.length > 16) {
                 self.usrnamePrompt.textColor = [UIColor redColor];
-                self.usrnamePrompt.text = @"已达到用户名长度限制";
+                self.usrnamePrompt.text = @"长度超过16个字符";
                 return NO;
             }
-            else if (textField.text.length <= 1)
+            else if (textField.text.length + string.length < 3)
             {
                 self.usrnamePrompt.textColor = [UIColor redColor];
                 self.usrnamePrompt.text = @"用户名太短";

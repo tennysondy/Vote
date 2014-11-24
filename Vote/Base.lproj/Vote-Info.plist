@@ -42,6 +42,10 @@
 			<false/>
 		</dict>
 	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>请打开定位服务，以便程序自动设置您的所在城市</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>请打开定位服务，以便程序自动设置您的所在城市</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

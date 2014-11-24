@@ -14,6 +14,8 @@ typedef void (^Signature)(NSString *signature);
 
 @property (copy, nonatomic) Signature signatureCallBack;
 
+@property (strong, nonatomic) NSString *signatureText;
+
 @end
 
 

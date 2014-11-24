@@ -172,7 +172,7 @@
         //添加cell间的分割线
         CGFloat sepratorHeight = cell.frame.size.height - 0.5;
         UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, sepratorHeight, 320.0, 0.5)];
-        v.backgroundColor = [UIColor lightGrayColor];
+        v.backgroundColor = SEPARATOR_COLOR;
         [cell.contentView addSubview:v];
         
     } else if (indexPath.row == 1) {
@@ -208,7 +208,7 @@
         //添加cell间的分割线
         CGFloat sepratorHeight = cell.frame.size.height - 0.5;
         UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, sepratorHeight, 320.0, 0.5)];
-        v.backgroundColor = [UIColor lightGrayColor];
+        v.backgroundColor = SEPARATOR_COLOR;
         [cell.contentView addSubview:v];
     } else if (indexPath.row == 2) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"Add Friend" forIndexPath:indexPath];
@@ -241,9 +241,9 @@
     //placeholderImage
     UIImage *headImage;
     if ([self.gender isEqualToString:@"f"]) {
-        headImage = [UIImage imageNamed:@"defaultFemaleHeadImage140.png"];
+        headImage = [UIImage imageNamed:@"defaultFemaleHeadImage70.png"];
     } else {
-        headImage = [UIImage imageNamed:@"defaultMaleHeadImage140.png"];
+        headImage = [UIImage imageNamed:@"defaultMaleHeadImage70.png"];
     }
     /*
     __block BOOL success = YES;

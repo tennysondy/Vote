@@ -14,6 +14,8 @@ typedef void (^theNewScreenName)(NSString *screenname);
 
 @property (copy, nonatomic) theNewScreenName theNewScreenNameCallBack;
 
+@property (strong, nonatomic) NSString *nameText;
+
 @end
 
 #define CSNVC_ALERTVIEW_UPDATE_SUCCESS_TAG           1001

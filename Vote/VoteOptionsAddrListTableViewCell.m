@@ -45,6 +45,7 @@
             CGRect rect = CGRectMake(OALTVC_RGN_CTGRY_COORDINATE_X, OALTVC_RGN_CTGRY_COORDINATE_Y, OALTVC_RGN_CTGRY_WIDTH, OALTVC_RGN_CTGRY_HEIGHT);
             self.rgnCtgry = [[UILabel alloc] initWithFrame:rect];
             self.rgnCtgry.font = [UIFont fontWithName:OALTVC_RGN_CTGRY_FONT size:OALTVC_RGN_CTGRY_FONT_SIZE];
+            self.rgnCtgry.textColor = [UIColor lightGrayColor];
             [self.contentView addSubview:self.rgnCtgry];
         }
         
@@ -52,6 +53,7 @@
             CGRect rect = CGRectMake(OALTVC_DISTANCE_COORDINATE_X, OALTVC_DISTANCE_COORDINATE_Y, OALTVC_DISTANCE_WIDTH, OALTVC_DISTANCE_HEIGHT);
             self.distance = [[UILabel alloc] initWithFrame:rect];
             self.distance.font = [UIFont fontWithName:OALTVC_DISTANCE_FONT size:OALTVC_DISTANCE_FONT_SIZE];
+            self.distance.textColor = [UIColor lightGrayColor];
             self.distance.textAlignment = NSTextAlignmentRight;
             [self.contentView addSubview:self.distance];
         }
@@ -100,6 +102,7 @@
         CGRect rect = CGRectMake(OALTVC_RGN_CTGRY_COORDINATE_X, OALTVC_RGN_CTGRY_COORDINATE_Y, OALTVC_RGN_CTGRY_WIDTH, OALTVC_RGN_CTGRY_HEIGHT);
         self.rgnCtgry = [[UILabel alloc] initWithFrame:rect];
         self.rgnCtgry.font = [UIFont fontWithName:OALTVC_RGN_CTGRY_FONT size:OALTVC_RGN_CTGRY_FONT_SIZE];
+        self.rgnCtgry.textColor = [UIColor lightGrayColor];
         [self.contentView addSubview:self.rgnCtgry];
     }
     
@@ -107,6 +110,7 @@
         CGRect rect = CGRectMake(OALTVC_DISTANCE_COORDINATE_X, OALTVC_DISTANCE_COORDINATE_Y, OALTVC_DISTANCE_WIDTH, OALTVC_DISTANCE_HEIGHT);
         self.distance = [[UILabel alloc] initWithFrame:rect];
         self.distance.font = [UIFont fontWithName:OALTVC_DISTANCE_FONT size:OALTVC_DISTANCE_FONT_SIZE];
+        self.distance.textColor = [UIColor lightGrayColor];
         self.distance.textAlignment = NSTextAlignmentRight;
         [self.contentView addSubview:self.distance];
     }

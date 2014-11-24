@@ -47,7 +47,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     self.hotList = [[NSMutableArray alloc] init];
     //定位城市
@@ -88,6 +88,9 @@
     self.tableView.footerPullToRefreshText = @"上拉可以加载更多数据";
     self.tableView.footerReleaseToRefreshText = @"松开马上加载更多数据";
     self.tableView.footerRefreshingText = @"正在努力加载中,请稍后...";
+    
+    //初始化网络返回数据标识
+    self.respFlag = FETCHED_DATA;
 }
 
 - (void)dropDown:(id)sender
@@ -99,6 +102,13 @@
 {
     [super viewWillAppear:animated];
     [self.dropDownBtn setHidden:NO];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    //self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    //self.navigationController.navigationBar.alpha = 0.98;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -113,7 +123,40 @@
     [self.dropDownBtn setHidden:YES];
 }
 
-#pragma mark - fetch data from server
+- (void)fetchRespPrompt
+{
+    if (self.respFlag == FETCHED_ERROR) {
+        self.fetchRespLable.text = @"加载失败";
+        [self.view addSubview:self.fetchRespLable];
+        
+    } else if (self.respFlag == NO_DATA_IN_CUR_CITY) {
+        self.fetchRespLable.text = @"当前城市无热门活动信息";
+        [self.view addSubview:self.fetchRespLable];
+        
+    } else {
+        if ([self.view viewWithTag:TTVC_FETCHED_RESP_TAG] != nil) {
+            [self.fetchRespLable removeFromSuperview];
+        }
+    }
+}
+
+#pragma mark - Property functions
+
+- (UILabel *)fetchRespLable
+{
+    if (_fetchRespLable == nil) {
+        _fetchRespLable = [[UILabel alloc] initWithFrame:(CGRectMake(0, 0, 200, 20))];
+        _fetchRespLable.textAlignment = NSTextAlignmentCenter;
+        _fetchRespLable.tag = TTVC_FETCHED_RESP_TAG;
+        _fetchRespLable.center =  CGPointMake(self.view.center.x, self.view.center.y - NAVIGATION_BAR_HEIGHT);
+        _fetchRespLable.font = [UIFont boldSystemFontOfSize:15.0];
+        _fetchRespLable.textColor = [UIColor lightGrayColor];
+    }
+    
+    return _fetchRespLable;
+}
+
+#pragma mark - Fetch data from server
 
 - (void)fetchDataFromServerLoadMore:(BOOL)loadMore withSender:(id)sender withCity:(NSString *)city
 {
@@ -124,15 +167,16 @@
         NSUInteger tmpStartIndex = [self.startIndex unsignedIntegerValue];
         self.startIndex = [NSNumber numberWithUnsignedInteger:(tmpCount+tmpStartIndex)];
     } else {
+        /*
         if (self.loadingPrompt == nil) {
             self.loadingPrompt = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 90, 20)];
-            self.loadingPrompt.center = CGPointMake(self.view.center.x, self.view.center.y - 84);
+            self.loadingPrompt.center = CGPointMake(self.view.center.x, self.view.center.y - NAVIGATION_BAR_HEIGHT);
             self.loadingPrompt.textColor = [UIColor lightGrayColor];
             self.loadingPrompt.textAlignment = NSTextAlignmentCenter;
             self.loadingPrompt.font = [UIFont boldSystemFontOfSize:15.0];
             [self.view addSubview:self.loadingPrompt];
         }
-        /*
+        
         self.loadingPrompt.text = @"正在加载...";
         activityIndicator = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 0, 24, 24)];
         activityIndicator.center = CGPointMake(self.view.center.x, self.view.center.y - 44);
@@ -155,8 +199,8 @@
     [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"operation: %@", operation);
         NSLog(@"responseObject: %@", responseObject);
-        [self.loadingPrompt removeFromSuperview];
-        self.loadingPrompt = nil;
+        //[self.loadingPrompt removeFromSuperview];
+        //self.loadingPrompt = nil;
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         //[activityIndicator stopAnimating];
         //[activityIndicator removeFromSuperview];
@@ -166,6 +210,9 @@
                 self.navigationItem.rightBarButtonItem = sender;
             });
         }
+        
+        self.respFlag = FETCHED_DATA;
+        
         if ([responseObject objectForKey:SERVER_VOTES_BY_ORDER] != [NSNull null]) {
             self.curHotList = [NSArray arrayWithArray:(NSArray *)[responseObject objectForKey:SERVER_VOTES_BY_ORDER]];
         } else {
@@ -177,6 +224,7 @@
                 self.hotList = [NSMutableArray arrayWithArray:self.curHotList];
             } else {
                 self.hotList = nil;
+                self.respFlag = NO_DATA_IN_CUR_CITY;
             }
             [self.tableView reloadData];
             //下拉刷新停止
@@ -192,21 +240,24 @@
                 [self.tableView reloadData];
             }
         }
+        [self fetchRespPrompt];
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"connect network failure in second table view!");
         NSLog(@"operation: %@", operation);
         NSLog(@"operation: %@", operation.responseString);
         NSLog(@"Error: %@", error);
+        self.respFlag = FETCHED_ERROR;
         if (sender != nil) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.navigationItem.rightBarButtonItem = sender;
             });
         }
         if (loadMore == NO) {
-            self.loadingPrompt.text = @"加载失败";
+            //self.loadingPrompt.text = @"加载失败";
             //[activityIndicator stopAnimating];
             //[activityIndicator removeFromSuperview];
+            [self fetchRespPrompt];
         }
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         [self.tableView headerEndRefreshing];
@@ -244,6 +295,7 @@
         self.tableView.footerReleaseToRefreshText = @"松开马上加载更多数据";
         self.tableView.footerRefreshingText = @"正在努力加载中,请稍后...";
     }
+    [self.tableView headerBeginRefreshing];
     [self fetchDataFromServerLoadMore:NO withSender:sender withCity:self.city];
 }
 
@@ -370,6 +422,7 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    [segue.destinationViewController setHidesBottomBarWhenPushed:YES];
     if ([segue.identifier isEqualToString:@"Hot Details"]) {
         [self.dropDownBtn setHidden:YES];
         VoteHotDetailsTableViewController *tvc = [segue destinationViewController];
@@ -379,11 +432,13 @@
     }
     if ([segue.identifier isEqualToString:@"Hot Change City"]) {
         VoteCityTableViewController *tvc = [[segue.destinationViewController viewControllers] firstObject];
+        tvc.identifier = @"Hot Change City";
         __weak __typeof(self)weakSelf = self;
         tvc.changeCity = ^(NSString *city){
             weakSelf.leftBarButtonItem.title = city;
             [weakSelf changeBtnFrameByCity:weakSelf.leftBarButtonItem.title];
             weakSelf.city = city;
+            [weakSelf.tableView headerBeginRefreshing];
             [weakSelf fetchDataFromServerLoadMore:NO withSender:nil withCity:city];
         };
     }

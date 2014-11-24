@@ -598,7 +598,7 @@
         if ([cell.contentView viewWithTag:CATVC_SEPARATOR_TAG] == nil) {
             //添加cell间的分割线
             UIView *v = [[UIView alloc] initWithFrame:CGRectMake(15.0, 49.5, 305.0, 0.5)];
-            v.backgroundColor = [UIColor lightGrayColor];
+            v.backgroundColor = SEPARATOR_COLOR;
             v.tag = CATVC_SEPARATOR_TAG;
             [cell.contentView addSubview:v];
         }
@@ -632,7 +632,7 @@
         if ([cell.contentView viewWithTag:CATVC_SEPARATOR_TAG] == nil) {
             //添加cell间的分割线
             UIView *v = [[UIView alloc] initWithFrame:CGRectMake(15.0, 49.5, 305.0, 0.5)];
-            v.backgroundColor = [UIColor lightGrayColor];
+            v.backgroundColor = SEPARATOR_COLOR;
             v.tag = CATVC_SEPARATOR_TAG;
             [cell.contentView addSubview:v];
         }
@@ -793,7 +793,7 @@
         if ([cell.contentView viewWithTag:CATVC_SEPARATOR_TAG] == nil) {
             //添加cell间的分割线
             UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
-            v.backgroundColor = [UIColor lightGrayColor];
+            v.backgroundColor = SEPARATOR_COLOR;
             v.tag = CATVC_SEPARATOR_TAG;
             [cell.contentView addSubview:v];
         }

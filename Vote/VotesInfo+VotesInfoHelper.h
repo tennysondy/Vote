@@ -33,4 +33,6 @@
 
 + (void)updateParticipantsofVoteInfo:(VotesInfo *)aVote withUsername:(NSString *)username andScreenName:(NSString *)screenname;
 
++ (BOOL)checkBasicInfoExistedOfVote:(VotesInfo *)aVote;
+
 @end

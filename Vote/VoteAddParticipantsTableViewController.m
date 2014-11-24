@@ -189,7 +189,7 @@
     if ([cell.contentView viewWithTag:ADD_PARTICIPANTS_SEPARATOR_TAG] == nil) {
         CGFloat sepratorHeight = cell.frame.size.height - 0.5;
         UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, sepratorHeight, 320.0, 0.5)];
-        v.backgroundColor = [UIColor lightGrayColor];
+        v.backgroundColor = SEPARATOR_COLOR;
         [cell.contentView addSubview:v];
     }
     //设置check mark

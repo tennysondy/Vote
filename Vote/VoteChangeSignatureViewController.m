@@ -8,9 +8,12 @@
 
 #import "VoteChangeSignatureViewController.h"
 #import "AFHTTPRequestOperationManager.h"
+#import "YIInnerShadowView.h"
 
 @interface VoteChangeSignatureViewController () <UIAlertViewDelegate, UITextViewDelegate>
-
+{
+    YIInnerShadowView *innerShadowView;
+}
 @property (weak, nonatomic) IBOutlet UITextView *signatureTextView;
 @property (weak, nonatomic) IBOutlet UILabel *wordsPrompt;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *rightBarButtonItem;
@@ -33,11 +36,23 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.signatureTextView.layer.borderWidth = 1.0;
-    self.signatureTextView.layer.borderColor = [[UIColor blackColor] CGColor];
+    //self.signatureTextView.layer.borderWidth = 1.0;
+    //self.signatureTextView.layer.borderColor = [[UIColor blackColor] CGColor];
     self.wordsPrompt.text = @"还可输入30个字";
+    self.wordsPrompt.textColor = UIColorFromRGB(0xC7C7CD);
     //self.wordsPrompt.layer.borderWidth = 1.0;
     //self.wordsPrompt.layer.borderColor = [[UIColor grayColor] CGColor];
+    self.signatureTextView.backgroundColor = [UIColor whiteColor];
+    self.signatureTextView.text = self.signatureText;
+    self.signatureTextView.layer.masksToBounds = YES;
+    innerShadowView = [[YIInnerShadowView alloc] initWithFrame:self.signatureTextView.bounds];
+    innerShadowView.shadowRadius = 2;
+    innerShadowView.cornerRadius = 0;
+    innerShadowView.shadowMask = YIInnerShadowMaskAll;
+    innerShadowView.layer.borderColor = [UIColorFromRGB(0xF7F7F7) CGColor];
+    innerShadowView.layer.borderWidth = 1.0;
+    [self.signatureTextView addSubview:innerShadowView];
+    
     [self.signatureTextView becomeFirstResponder];
 }
 
@@ -86,13 +101,16 @@
         if (self.signatureCallBack) {
             self.signatureCallBack(self.signatureTextView.text);
         }
-        UIAlertView *alert = nil;
-        alert = [[UIAlertView alloc] initWithTitle:@"签名更新成功"
-                                           message:nil
-                                          delegate:nil
-                                 cancelButtonTitle:@"确定"
-                                 otherButtonTitles:nil];
-        [alert show];
+        if (self.view.window != nil) {
+            UIAlertView *alert = nil;
+            alert = [[UIAlertView alloc] initWithTitle:@"签名更新成功"
+                                               message:nil
+                                              delegate:self
+                                     cancelButtonTitle:@"确定"
+                                     otherButtonTitles:nil];
+            [alert show];
+        }
+
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error){
         NSLog(@"operation: %@", operation);
@@ -102,13 +120,15 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             self.rightBarButtonItem.customView = nil;
         });
-        UIAlertView *alert = nil;
-        alert = [[UIAlertView alloc] initWithTitle:@"签名更新失败"
-                                           message:@"无网络连接或服务器出错，请稍后再试"
-                                          delegate:nil
-                                 cancelButtonTitle:@"确定"
-                                 otherButtonTitles:nil];
-        [alert show];
+        if (self.view.window != nil) {
+            UIAlertView *alert = nil;
+            alert = [[UIAlertView alloc] initWithTitle:@"签名更新失败"
+                                               message:@"无网络连接或服务器出错，请稍后再试"
+                                              delegate:nil
+                                     cancelButtonTitle:@"确定"
+                                     otherButtonTitles:nil];
+            [alert show];
+        }
     }];
 }
 
@@ -145,6 +165,12 @@
     } else {
         self.wordsPrompt.textColor = [UIColor blackColor];
     }
+}
+
+#pragma mark - AlertView Delegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)didReceiveMemoryWarning

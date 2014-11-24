@@ -219,7 +219,7 @@
             
             CGRect rect = CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5);
             UIView *separator = [[UIView alloc] initWithFrame:rect];
-            separator.backgroundColor = [UIColor lightGrayColor];
+            separator.backgroundColor = SEPARATOR_COLOR;
             separator.tag = 1000;
             [cell.contentView addSubview:separator];
 
@@ -350,6 +350,10 @@
             UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"提交失败" message:@"网络错误" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
             [av show];
         }];
+        
+        if (self.updateLoadingView) {
+            self.updateLoadingView();
+        }
         
     } else {
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"提交失败" message:@"未选择任何选项" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];

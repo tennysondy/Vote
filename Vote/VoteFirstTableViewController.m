@@ -106,18 +106,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(resetDatabase:) name:@"Login" object:nil];
-    //定位城市
+    //定位城市暂不使用
     self.leftBarButtonItem.enabled = NO;
+    self.leftBarButtonItem.title = @"";
     //添加城市下拉按钮
     self.dropDownBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.dropDownBtn addTarget:self action:@selector(dropDown:) forControlEvents:UIControlEventTouchUpInside];
     UIImage *imageDown = [UIImage imageNamed:@"down.png"];
     [self.dropDownBtn setBackgroundImage:imageDown forState:UIControlStateNormal];
     self.dropDownBtn.showsTouchWhenHighlighted = YES;
-    [self.navigationController.navigationBar addSubview:self.dropDownBtn];
+    //城市下拉button暂不使用
+    //[self.navigationController.navigationBar addSubview:self.dropDownBtn];
+    /*
     NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
     NSString *city = [ud stringForKey:SERVER_CITY];
     if (city != nil) {
@@ -129,7 +132,8 @@
     }
     //设置城市下拉按钮位置和大小
     [self changeBtnFrameByCity:self.leftBarButtonItem.title];
-    
+     */
+    NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
     //self.tableView.backgroundColor = UIColorFromRGB(0xEDEDED);
     self.imagesDownloadQueue = [[NSOperationQueue alloc] init];
     self.imagesDownloadQueue.name = @"download image";
@@ -138,7 +142,7 @@
     self.AFManager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     self.AFManager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
     LoadingIconImageView *activityIndicator = [[LoadingIconImageView alloc] initWithFrame:CGRectMake(0, 0, 24, 24)];
-    activityIndicator.center = CGPointMake(self.view.center.x, self.view.center.y - 64);
+    activityIndicator.center = CGPointMake(self.view.center.x, self.view.center.y - NAVIGATION_BAR_HEIGHT);
     [self.view addSubview:activityIndicator];
     [activityIndicator startAnimating];
     [CoreDataHelper sharedDatabase:^(UIManagedDocument *database) {
@@ -153,16 +157,21 @@
             [self.tableView reloadData];
             NSString *username = [ud objectForKey:USERNAME];
             if ([Users fetchUsersWithUsername:username withContext:self.managedObjectContext] != nil) {
-                self.AFManager.operationQueue.maxConcurrentOperationCount = NSOperationQueueDefaultMaxConcurrentOperationCount;
+                self.AFManager.operationQueue.maxConcurrentOperationCount = 4;
             }
+            /*
             [self fetchUserInfoFromServer];
             [FailedDeletedFriends batchRemoveDeletedFriendsWithContext:self.managedObjectContext];
             [FailedDeletedVotes batchRemoveDeletedVotesWithContext:self.managedObjectContext];
             [self fetchFriendsFromServer];
             [self fetchVotesInfoListFromServer];
+             */
             
         }
     }];
+    //设置loading view flag
+    [ud setBool:YES forKey:FTVC_LOADING_VIEW_FLAG];
+    [ud synchronize];
 }
 
 - (void)dropDown:(id)sender
@@ -177,8 +186,8 @@
     NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
     authenticated = [ud boolForKey:SERVER_AUTHENTICATED];
     if (authenticated) {
-        //开启定位
-        [self setupLocationManager];
+        //开启定位,暂时取消在此页面开启功能
+        //[self setupLocationManager];
         //收取未读信息
         [self getUnreadMsg];
         if (self.managedObjectContext) {
@@ -191,7 +200,8 @@
         } else {
             
         }
-        [self.dropDownBtn setHidden:NO];
+        //下拉城市功能暂不提供
+        //[self.dropDownBtn setHidden:NO];
 
     } else {
 
@@ -201,6 +211,8 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    //self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    //self.navigationController.navigationBar.alpha = 0.9;
 
 }
 
@@ -208,11 +220,10 @@
 {
     [super viewWillDisappear:animated];
     NSLog(@"will disappear");
-    [self.locationManager stopUpdatingLocation];
+    //[self.locationManager stopUpdatingLocation];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     //清除badge
     [[[[self.tabBarController viewControllers] objectAtIndex:0] tabBarItem] setBadgeValue:nil];
-    
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -367,36 +378,84 @@
     self.fetchedResultsController = nil;
 }
 
+#pragma mark - Loading view function
+
+- (void)startLoadingView
+{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 134, 30)];
+    //titleView.layer.borderColor = [UIColor whiteColor].CGColor;
+    //titleView.layer.borderWidth = 1.0;
+    titleView.backgroundColor = [UIColor clearColor];
+    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(10, 3, 24, 24)];
+    [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+    [activityIndicator startAnimating];
+    [titleView addSubview:activityIndicator];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(40, 0, 105, 30)];
+    label.text = @"同步中...";
+    label.textColor = [UIColor whiteColor];
+    label.font = [UIFont boldSystemFontOfSize:19.0f];
+    //label.layer.borderColor = [UIColor whiteColor].CGColor;
+    //label.layer.borderWidth = 1.0;
+    [titleView addSubview:label];
+    self.navigationItem.titleView = titleView;
+}
+
+- (void)stopLoadingView
+{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.navigationItem.titleView = nil;
+    });
+}
+
 # pragma mark - fetch data from server
 
 - (void)fetchVotesInfoListFromServer
 {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    NSString *votesInfoURL = [[NSString alloc] initWithFormat:@"http://115.28.228.41/vote/get_vote.php"];
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    //增加0.5秒延迟，处理显示位置不居中问题
+    if ([ud boolForKey:FTVC_LOADING_VIEW_FLAG] == YES) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self startLoadingView];
+        });
+    }
+    NSString *votesInfoURL = [[NSString alloc] initWithFormat:@"http://115.28.228.41/vote/get_vote.php"];
     NSString *username = [ud objectForKey:USERNAME];
     NSDictionary *parameters = @{SERVER_USERNAME: username};
     __weak NSManagedObjectContext *context = self.managedObjectContext;
     [self.AFManager GET:votesInfoURL parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"operation: %@", operation);
         NSLog(@"responseObject: %@", responseObject);
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        if ([ud boolForKey:FTVC_LOADING_VIEW_FLAG] == YES) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self stopLoadingView];
+            });
+            [ud setBool:NO forKey:FTVC_LOADING_VIEW_FLAG];
+            [ud synchronize];
+        } else {
+            [self stopLoadingView];
+        }
         //1. 和数据库比对，如果存在并需要修改，则修改，不存在则创建，如果不存在创建新的
         NSArray *votes = (NSArray *)[responseObject objectForKey:SERVER_VOTES];
         if ((NSNull *)votes != [NSNull null]) {
             if ([votes count] > 0) {
-                [VotesInfo updateDatabaseWithList:votes withContext:context];
-                [context save:NULL];
+                [self.managedObjectContext performBlock:^{
+                    [VotesInfo updateDatabaseWithList:votes withContext:context];
+                    [self.document saveToURL:self.document.fileURL forSaveOperation:UIDocumentSaveForOverwriting completionHandler:^(BOOL success) {
+                    }];
+                }];
+
+                 
             }
         }
-        [self.tableView reloadData];
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"connect network failure in first table view!");
         NSLog(@"operation: %@", operation);
         NSLog(@"operation: %@", operation.responseString);
         NSLog(@"Error: %@", error);
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        [self stopLoadingView];
     }];
 }
 
@@ -414,8 +473,6 @@
         NSLog(@"responseObject: %@", responseObject);
         //1. 和数据库比对，如果存在并需要修改，则修改，不存在则创建，如果不存在创建新的
         [Users updateDatabaseWithData:(NSDictionary *)responseObject withContext:context withQueue:queue];
-        [self.tableView reloadData];
-        [context save:NULL];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"connect network failure in first table view!");
@@ -432,8 +489,7 @@
             if ([users count] == 0) {
                 [context performBlock:^{
                     [Users insertUsersToDatabaseWithData:nil withManagedObjectContext:context withQueue:nil];
-                    [context save:NULL];
-                    [self.tableView reloadData];
+
                 }];
             } else if (users == nil) {
                 NSLog(@"fetch data error from database in first table view");
@@ -462,7 +518,6 @@
         NSArray *data = [[NSArray alloc] initWithArray:[responseObject objectForKey:SERVER_FRIENDS_ARRAY]];
         if ([data count]) {
             [Friends updateDatabaseWithData:data withContext:context withQueue:queue];
-            [context save:NULL];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -510,23 +565,25 @@
     NSLog(@"section num = %ld, row num = %ld", (long)section, (long)numberOfRows);
     
     //添加友好提示信息
-    UIImageView *imageView;
-    if (numberOfRows == 0) {
-        imageView = (UIImageView *)[self.view viewWithTag:FTVC_NOTHING_IMG_TAG];
-        if (imageView == nil) {
-            imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 193.5, 74.5)];
-            imageView.image = [UIImage imageNamed:@"nothing.png"];
-            imageView.center = CGPointMake(self.view.center.x, self.view.center.y - 64);
-            imageView.tag = FTVC_NOTHING_IMG_TAG;
-            [self.view addSubview:imageView];
+    if (self.fetchedResultsController != nil) {
+        UIImageView *imageView;
+        if (numberOfRows == 0) {
+            imageView = (UIImageView *)[self.view viewWithTag:FTVC_NOTHING_IMG_TAG];
+            if (imageView == nil) {
+                imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 194, 75)];
+                imageView.image = [UIImage imageNamed:@"nothing.png"];
+                imageView.center = CGPointMake(self.view.center.x, self.view.center.y - 64);
+                imageView.tag = FTVC_NOTHING_IMG_TAG;
+                [self.view addSubview:imageView];
+            }
+            self.tableView.backgroundColor = [UIColor whiteColor];
+        } else {
+            imageView = (UIImageView *)[self.view viewWithTag:FTVC_NOTHING_IMG_TAG];
+            if (imageView != nil) {
+                [imageView removeFromSuperview];
+            }
+            self.tableView.backgroundColor = UIColorFromRGB(0xEDEDED);
         }
-        self.tableView.backgroundColor = [UIColor whiteColor];
-    } else {
-        imageView = (UIImageView *)[self.view viewWithTag:FTVC_NOTHING_IMG_TAG];
-        if (imageView != nil) {
-            [imageView removeFromSuperview];
-        }
-        self.tableView.backgroundColor = UIColorFromRGB(0xEDEDED);
     }
     
     return numberOfRows;
@@ -544,7 +601,18 @@
     // Configure the cell...
     VotesInfo *aVote = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.imageUrl = aVote.imageUrl;
-    cell.title = aVote.title;
+    if ([aVote.unreadMsgFlag boolValue] == YES) {
+        NSString *str = [[NSString alloc] initWithFormat:@"[新]%@", aVote.title];
+        NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:str];
+        [attrStr addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(0,3)];
+        [attrStr addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:FIRST_CELL_TITLE_FONT_SIZE] range:NSMakeRange(0,str.length)];
+        cell.title = attrStr;
+    } else {
+        NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:aVote.title];
+        [attrStr addAttribute:NSForegroundColorAttributeName value:[UIColor blackColor] range:NSMakeRange(0,aVote.title.length)];
+        [attrStr addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:FIRST_CELL_TITLE_FONT_SIZE] range:NSMakeRange(0,aVote.title.length)];
+        cell.title = attrStr;
+    }
     if ([aVote.thePublic boolValue] == YES) {
         cell.thePublic = aVote.thePublic;
     } else {
@@ -564,7 +632,8 @@
     cell.anonymousLabel.font = [UIFont boldSystemFontOfSize:FIRST_CELL_ANONYMOUS_FONT_SIZE];
     cell.anonymousLabel.textAlignment = NSTextAlignmentCenter;
     cell.anonymousLabel.textColor = [UIColor whiteColor];
-    cell.titleLabel.font = [UIFont boldSystemFontOfSize:FIRST_CELL_TITLE_FONT_SIZE];
+    //cell.titleLabel.textColor = [UIColor redColor];
+    //cell.titleLabel.font = [UIFont boldSystemFontOfSize:FIRST_CELL_TITLE_FONT_SIZE];
     cell.timerLabel.font = [UIFont fontWithName:FIRST_CELL_TIMER_FONT size:FIRST_CELL_TIMER_FONT_SIZE];
     if ([aVote.isEnd boolValue] == YES) {
         cell.timerLabel.textColor = [UIColor lightGrayColor];
@@ -610,6 +679,9 @@
         [VotesInfo deleteVotesInfoOnServer:aVote.voteID withManagedObjectContext:self.managedObjectContext forever:YES];
         //从本地数据库删除
         [VotesInfo deleteVotesInfo:aVote withManagedObjectContext:self.managedObjectContext];
+        [self.document saveToURL:self.document.fileURL forSaveOperation:UIDocumentSaveForOverwriting completionHandler:^(BOOL success) {
+            
+        }];
         /*
         if ([aVoteUS.deleteForever boolValue] == YES) {
             //永久删除数据，向服务器发送永久删除信息
@@ -635,7 +707,32 @@
     [self.tableView reloadData];
 }
 
-
+/*
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath
+{
+    switch(type)
+    {
+        case NSFetchedResultsChangeInsert:
+            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        case NSFetchedResultsChangeDelete:
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        case NSFetchedResultsChangeUpdate:
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            break;
+        case NSFetchedResultsChangeMove:
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:[NSArray
+                                                    arrayWithObject:newIndexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
+            break;
+    }
+}
+ */
 
 - (void)didReceiveMemoryWarning
 {
@@ -667,6 +764,8 @@
             [[[[self.tabBarController viewControllers] objectAtIndex:0] tabBarItem] setBadgeValue:nil];
         } else {
             [[[[self.tabBarController viewControllers] objectAtIndex:0] tabBarItem] setBadgeValue:[usrVoteBadgeNum stringValue]];
+            [ud setBool:YES forKey:FTVC_LOADING_VIEW_FLAG];
+            [ud synchronize];
         }
         if ([[friendsBadgeNum stringValue] isEqualToString:@"0"]) {
             [[[[self.tabBarController viewControllers] objectAtIndex:1] tabBarItem] setBadgeValue:nil];
@@ -707,6 +806,7 @@
     }
     if ([segue.identifier isEqualToString:@"Change City"]) {
         VoteCityTableViewController *tvc = [[segue.destinationViewController viewControllers] firstObject];
+        tvc.identifier = @"Change City";
         __weak __typeof(self)weakSelf = self;
         tvc.changeCity = ^(NSString *city){
             weakSelf.leftBarButtonItem.title = city;

@@ -17,7 +17,9 @@
 
 + (NSArray *)fetchOptionsWithVoteID:(NSNumber *)voteId withContext:(NSManagedObjectContext *)context
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"whichVote.voteID == %@", voteId];
+    NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+    NSString *username = [ud stringForKey:USERNAME];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whichVote.voteID == %@) AND (whichVote.whoseVote.username == %@)", voteId, username];
     NSArray *results = [CoreDataHelper searchObjectsForEntity:VOTES_OPTIONS withPredicate:predicate andSortKey:VOTE_OPTIONS_ORDER andSortAscending:YES andContext:context];
     
     return results;
@@ -26,9 +28,11 @@
 + (void)updateDatabaseWithBasic:(NSArray *)data ofVote:(VotesInfo *)aVote withContext:(NSManagedObjectContext *)context withQueue:(NSOperationQueue *)queue
 {
     Options *aOption = nil;
+    NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+    NSString *username = [ud stringForKey:USERNAME];
     for (NSDictionary *element in data) {
         NSString *order = [element objectForKey:SERVER_OPTIONS_ORDER];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whichVote.voteID == %@) AND (order == %@)", aVote.voteID, order];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whichVote.voteID == %@) AND (whichVote.whoseVote.username == %@) AND (order == %@)", aVote.voteID, username, order];
         NSArray *results = [CoreDataHelper searchObjectsForEntity:VOTES_OPTIONS withPredicate:predicate andSortKey:nil andSortAscending:YES andContext:context];
         if ([results count] == 1) {
             aOption = [results firstObject];
@@ -111,7 +115,9 @@
         return;
     }
     //更新数据前，删除之前的投票数据
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"whichVote.voteID == %@", aVote.voteID];
+    NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+    NSString *username = [ud stringForKey:USERNAME];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whichVote.voteID == %@) AND (whichVote.whoseVote.username == %@)", aVote.voteID, username];
     NSArray *results = [CoreDataHelper searchObjectsForEntity:VOTES_OPTIONS withPredicate:predicate andSortKey:nil andSortAscending:YES andContext:context];
     for (Options *elem in results) {
         //modify the voters
@@ -121,7 +127,7 @@
     }
     Options *aOption = nil;
     for (id key in details) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whichVote.voteID == %@) AND (order == %@)", aVote.voteID, key];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whichVote.voteID == %@) AND (whichVote.whoseVote.username == %@) AND (order == %@)", aVote.voteID, username, key];
         NSArray *results = [CoreDataHelper searchObjectsForEntity:VOTES_OPTIONS withPredicate:predicate andSortKey:nil andSortAscending:YES andContext:context];
         if ([results count] == 1) {
             aOption = [results firstObject];
@@ -142,7 +148,9 @@
 
 + (void)deleteOptionsWithVoteId:(NSNumber *)voteId withManagedObjectContext:(NSManagedObjectContext *)context
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"whichVote.voteID == %@", voteId];
+    NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+    NSString *username = [ud stringForKey:USERNAME];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whichVote.voteID == %@) AND (whichVote.whoseVote.username == %@)", voteId, username];
     NSArray *results = [CoreDataHelper searchObjectsForEntity:VOTES_OPTIONS withPredicate:predicate andSortKey:nil andSortAscending:YES andContext:context];
     for (Options *aOption in results) {
         [context deleteObject:aOption];

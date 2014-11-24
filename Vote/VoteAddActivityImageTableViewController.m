@@ -39,7 +39,7 @@
     //NSArray *party = [[NSArray alloc] initWithObjects:@"小聚一下", @"生日聚会", @"好久不见", @"不醉不归", nil];
     NSArray *party = [[NSArray alloc] initWithObjects:@"约会", @"小聚一下", @"生日聚会", @"团体聚会", nil];
     NSArray *partyImages = [[NSArray alloc] initWithObjects:@"dating.png", @"chat.png", @"birthday.png", @"BigParty.png", nil];
-    NSArray *meal = [[NSArray alloc] initWithObjects:@"吃个便饭", @"大宰一顿", nil];
+    NSArray *meal = [[NSArray alloc] initWithObjects:@"吃个便饭", @"上档次", nil];
     NSArray *mealImages = [[NSArray alloc] initWithObjects:@"rice.png", @"chicken.png", nil];
     //NSArray *entertainment = [[NSArray alloc] initWithObjects:@"约会", @"看电影", @"棋牌", @"K歌", @"游戏", nil];
     NSArray *entertainment = [[NSArray alloc] initWithObjects:@"看电影", @"K歌",@"棋牌", @"游戏", nil];

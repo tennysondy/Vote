@@ -8,10 +8,21 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum {
+    FETCHED_ERROR = -1,
+    NO_DATA_IN_CUR_CITY,
+    FETCHED_DATA,
+}FetchResp;
+
 @interface VoteThirdTableViewController : UITableViewController
+
+@property (assign, nonatomic) FetchResp respFlag;
+
+@property (strong, nonatomic) UILabel *fetchRespLable;
 
 @end
 
+#define TTVC_FETCHED_RESP_TAG        1000
 
 #define TTVC_TITLE_FONT              @"ChalkboardSE-Bold"
 #define TTVC_TITLE_FONT_SIZE         15.0

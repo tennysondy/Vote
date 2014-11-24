@@ -9,9 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 
+typedef void(^LoadingViewUpdate)(void);
+
 @interface VoteChooseOptionsTableViewController : UITableViewController
 
 @property (strong, nonatomic) NSNumber *voteId;
+@property (strong, nonatomic) LoadingViewUpdate updateLoadingView;
 
 @end
 

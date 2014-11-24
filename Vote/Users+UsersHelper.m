@@ -65,9 +65,11 @@
         NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
         NSString *username = [ud stringForKey:USERNAME];
         Users *aUser = [NSEntityDescription insertNewObjectForEntityForName:USERS inManagedObjectContext:context];
+        
         aUser.username = username;
         return;
     }
+    
     NSNumber *basicInfoLastUpdateTag = [[NSNumber alloc] init];
     NSNumber *headImageLastUpdateTag = [[NSNumber alloc] init];
     basicInfoLastUpdateTag = [data objectForKey:SERVER_BASIC_INFO_LAST_UPDATE_TAG];
@@ -149,12 +151,15 @@
             aUser.headImageLastUpdateTag = [data objectForKey:SERVER_HEAD_IMAGE_LAST_UPDATE_TAG];
             if (!((NSNull *)[data objectForKey:SERVER_THUMBNAILS_HEAD_IMAGE_URL] == [NSNull null])) {
                 aUser.thumbnailsHeadImageUrl = [data objectForKey:SERVER_THUMBNAILS_HEAD_IMAGE_URL];
+                NSLog(@"aUser.thumbnailsHeadImageUrl = %@",aUser.thumbnailsHeadImageUrl);
             }
             if (!((NSNull *)[data objectForKey:SERVER_MEDIUM_HEAD_IMAGE_URL] == [NSNull null])) {
                 aUser.mediumHeadImageUrl = [data objectForKey:SERVER_MEDIUM_HEAD_IMAGE_URL];
+                NSLog(@"aUser.mediumHeadImageUrl = %@",aUser.mediumHeadImageUrl);
             }
             if (!((NSNull *)[data objectForKey:SERVER_ORGINAL_HEAD_IMAGE_URL] == [NSNull null])) {
                 aUser.originalHeadImageUrl = [data objectForKey:SERVER_ORGINAL_HEAD_IMAGE_URL];
+                NSLog(@"aUser.originalHeadImageUrl = %@",aUser.originalHeadImageUrl);
             }
             [Users batchDownloadHeadImage:aUser withManagedObjectContext:context withQueue:queue];
         }
@@ -180,6 +185,7 @@
             //设置存储路径
             //UIImage *tmpImage = [UIImage imageWithData:(NSData *)responseObject scale:2.0];
             UIImage *tmpImage = (UIImage *)responseObject;
+            NSLog(@"width = %f, height = %f", tmpImage.size.width, tmpImage.size.height);
             if (tmpImage.size.width == ORIGINAL_HEAD_IMAGE_SIZE) {
                 if ([Users checkStoreDirectoryforUser:aUser]) {
                     aUser.originalHeadImagePath = [Users saveImage:tmpImage ofUsers:aUser withName:ORGINAL_HEAD_IMAGE_NAME andType:IMAGE_TYPE];

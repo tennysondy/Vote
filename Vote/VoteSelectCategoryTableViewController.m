@@ -32,7 +32,7 @@
     [super viewDidLoad];
     
     self.sectionTitle = [[NSArray alloc] initWithObjects:@"美食", @"聚会", @"娱乐", @"运动",@"旅游" , nil];
-    NSArray *meal = [[NSArray alloc] initWithObjects:@"默认", @"吃个便饭", @"大餐", nil];
+    NSArray *meal = [[NSArray alloc] initWithObjects:@"默认", @"吃个便饭", @"上档次", nil];
     NSArray *party = [[NSArray alloc] initWithObjects:@"默认", @"约会", @"小聚一下", @"生日聚会", @"团体聚会", nil];
     NSArray *entertainment = [[NSArray alloc] initWithObjects:@"默认", @"看电影", @"K歌", @"棋牌", @"游戏", nil];
     NSArray *sports = [[NSArray alloc] initWithObjects:@"默认", @"篮球", @"足球", @"羽毛球", @"徒步", @"跑步", @"桌球", @"瑜伽", @"游泳", @"网球", @"滑雪", @"自行车", @"跳舞", nil];

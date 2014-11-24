@@ -28,11 +28,15 @@
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     UIImageView *imageView;
+    CGRect rect = [[UIScreen mainScreen] bounds];
+    UIScreen *mainScreen = [UIScreen mainScreen];
+    NSLog(@"Screen bounds: %@, Screen resolution: %@, scale: %f, nativeScale: %f",
+          NSStringFromCGRect(mainScreen.bounds), mainScreen.coordinateSpace, mainScreen.scale, mainScreen.nativeScale);
     if (iPhone5) {
-        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 640, 1136)];
+        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, rect.size.width, rect.size.height)];
         imageView.image = [UIImage imageNamed:@"aboutBg5S.png"];
     } else {
-        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 640, 960)];
+        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, rect.size.width, rect.size.height)];
         imageView.image = [UIImage imageNamed:@"aboutBg.png"];
     }
     

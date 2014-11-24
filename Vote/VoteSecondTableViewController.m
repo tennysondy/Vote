@@ -90,7 +90,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(resetDatabase:) name:@"Login" object:nil];
     [CoreDataHelper sharedDatabase:^(UIManagedDocument *database) {
@@ -278,10 +278,10 @@
             UIGraphicsEndImageContext();
         } else {
             if ([friend.gender isEqualToString:@"m"]) {
-                image = [UIImage imageNamed:@"defaultMaleHeadImage80.png"];
+                image = [UIImage imageNamed:@"defaultMaleHeadImage40.png"];
                 cell.imageView.image = image;
             } else {
-                image = [UIImage imageNamed:@"defaultFemaleHeadImage80.png"];
+                image = [UIImage imageNamed:@"defaultFemaleHeadImage40.png"];
                 cell.imageView.image = image;
             }
 
@@ -354,6 +354,9 @@
         [Friends deleteFriendsOnServer:aFriend.username withManagedObjectContext:self.managedObjectContext];
         //从本地删除
         [Friends deleteFriends:aFriend withManagedObjectContext:self.managedObjectContext];
+        [self.document saveToURL:self.document.fileURL forSaveOperation:UIDocumentSaveForOverwriting completionHandler:^(BOOL success) {
+            
+        }];
     }
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view

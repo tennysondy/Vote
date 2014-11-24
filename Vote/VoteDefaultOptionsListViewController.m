@@ -58,6 +58,10 @@
 
 @property (strong, nonatomic) UISearchBar *searchBar;
 
+//大众点评网logo
+@property (weak, nonatomic) IBOutlet UIView *dpLogo;
+
+
 @end
 
 @implementation VoteDefaultOptionsListViewController
@@ -121,6 +125,24 @@
     //创建自定义视图
     //[self createCustomLocationView];
     //[self segmentedCtrlRightViewHidden:YES];
+    
+    //建立点评网logo
+    UIImageView *dpImageView = [[UIImageView alloc] initWithFrame:CGRectMake(98, 3, 12, 12)];
+    dpImageView.image = [UIImage imageNamed:@"dpLogo.png"];
+    dpImageView.layer.cornerRadius = 2.0;
+    dpImageView.clipsToBounds = YES;
+    UILabel *dpLabel = [[UILabel alloc] initWithFrame:CGRectMake(114, 3, 108, 12)];
+    dpLabel.text = @"数据来自大众点评网";
+    dpLabel.textColor = [UIColor whiteColor];
+    dpLabel.font = [UIFont systemFontOfSize:12.0f];
+    //dpLabel.layer.borderColor = [UIColor whiteColor].CGColor;
+    //dpLabel.layer.borderWidth = 1.0;
+    [self.dpLogo addSubview:dpImageView];
+    [self.dpLogo addSubview:dpLabel];
+    self.dpLogo.alpha = 0.6;
+    self.dpLogo.backgroundColor = [UIColor blackColor];
+    [self.view bringSubviewToFront:self.dpLogo];
+    //[self.dpLogo setHidden:YES];
     //建立定位服务
     [self setupLocationManager];
 }
@@ -217,6 +239,11 @@
     self.locationManager.distanceFilter = 50.0;
     self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
     self.currentLocation = [[CLLocation alloc] init];
+    //IOS 8 新增权限申请
+    if (SYSTEM_VERSION >= 8.0) {
+        [self.locationManager requestWhenInUseAuthorization];
+        //[self.locationManager requestAlwaysAuthorization];
+    }
 
 }
 
@@ -244,7 +271,7 @@
     self.menuScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, rect.size.width - self.sortBtn.frame.size.width, 44)];
     
     width = [NSArray arrayWithObjects:@28.0, @56.0, @56.0, @28.0, @56.0, @28.0, @28.0, @28.0, @28.0, nil];
-    int x = 0;
+    float x = 0;
     for (int i = 0; i < [self.menuList count]; i++) {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         x = x + 10;
@@ -264,15 +291,29 @@
         
         x += button.frame.size.width;
     }
-    self.menuScrollView.contentSize = CGSizeMake(x+10, self.menuScrollView.frame.size.height);
+    PrintRect(rect);
+    PrintRect(self.sortBtn.frame);
+    PrintRect(self.menuScrollView.frame);
+    NSLog(@"x = %f", x);
+    
+    self.menuScrollView.contentSize = CGSizeMake(x+10, 44);
+    if (SYSTEM_VERSION >= 8.0) {
+        self.menuScrollView.contentInset = UIEdgeInsetsMake(-64, 0, 0, 0);
+    }
     self.menuScrollView.backgroundColor = UIColorFromRGB(0xEEEEEE);
     self.menuScrollView.tag = DOLVC_MENU_SCROLL_VIEW_TAG;
     self.menuScrollView.delegate = self;
+    self.menuScrollView.panGestureRecognizer.delaysTouchesBegan = YES;
+    self.menuScrollView.alwaysBounceVertical = NO;
+    self.menuScrollView.alwaysBounceHorizontal = NO;
+    //self.menuScrollView.scrollEnabled = NO;
     self.menuScrollView.showsHorizontalScrollIndicator = NO;
+    self.menuScrollView.showsVerticalScrollIndicator = NO;
     //self.menuView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.menuScrollView];
     //设置underline
     UIButton *button = (UIButton *)[self.menuScrollView viewWithTag:2000];
+    PrintRect(button.frame);
     self.underline = [[UIView alloc] init];
     [self setUnderlineFrameWithButtonIndex:button];
     self.underline.backgroundColor = [UIColor orangeColor];
@@ -300,19 +341,19 @@
     self.leftTableView.delegate = self;
     self.leftTableView.dataSource= self;
     [self.leftTableView registerClass:[VoteOptionsAddrListTableViewCell class] forCellReuseIdentifier:@"Business List"];
-    [self.leftTableView registerClass:[VoteOptionsAddrListTableViewCell class] forCellReuseIdentifier:@"More Business"];
+    [self.leftTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"More Business"];
     //第二个TableView
     self.middleTableView = [[UITableView alloc] initWithFrame:CGRectMake(0 + offset, 0, rect.size.width, rect.size.height) style:UITableViewStylePlain];
     self.middleTableView.delegate = self;
     self.middleTableView.dataSource = self;
     [self.middleTableView registerClass:[VoteOptionsAddrListTableViewCell class] forCellReuseIdentifier:@"Business List"];
-    [self.middleTableView registerClass:[VoteOptionsAddrListTableViewCell class] forCellReuseIdentifier:@"More Business"];
+    [self.middleTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"More Business"];
     //第三个TableView
     self.rightTableView = [[UITableView alloc] initWithFrame:CGRectMake(0 + offset*2, 0, rect.size.width, rect.size.height) style:UITableViewStylePlain];
     self.rightTableView.delegate = self;
     self.rightTableView.dataSource = self;
     [self.rightTableView registerClass:[VoteOptionsAddrListTableViewCell class] forCellReuseIdentifier:@"Business List"];
-    [self.rightTableView registerClass:[VoteOptionsAddrListTableViewCell class] forCellReuseIdentifier:@"More Business"];
+    [self.rightTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"More Business"];
 
     
     [self.leftTableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -468,7 +509,9 @@
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    startContentOffsetX = scrollView.contentOffset.x;
+    if (scrollView.tag == DOLVC_MAIN_SCROLL_VIEW_TAG) {
+        startContentOffsetX = scrollView.contentOffset.x;
+    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -631,9 +674,8 @@
         }
         if ([cell.contentView viewWithTag:3000] == nil) {
             UIView *uv = [[UIView alloc] initWithFrame:CGRectMake(0, FRAME_HEIGHT(cell)-0.5, FRAME_WIDTH(cell), 0.5)];
-            uv.alpha = 0.3;
             uv.tag = 3000;
-            uv.backgroundColor = [UIColor lightGrayColor];
+            uv.backgroundColor = SEPARATOR_COLOR;
             [cell.contentView addSubview:uv];
         }
         return cell;
@@ -664,7 +706,11 @@
     //商户名字
     NSString *business = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_NAME];
     NSString *branchName = [[self.businessList objectAtIndex:indexPath.row] objectForKey:DIANPING_BRANCH_NAME];
-    cell.businessName.text = [business stringByAppendingFormat:@"(%@)", branchName];
+    if ([branchName isEqualToString:@""]) {
+        cell.businessName.text = business;
+    } else {
+        cell.businessName.text = [business stringByAppendingFormat:@"(%@)", branchName];
+    }
     //优惠券和团购
     if (hasCoupon && hasDeal) {
         [cell modifyBusinessNameWidth:OALTVC_BUSINESS_NAME_WIDTH2];
@@ -786,10 +832,10 @@
         NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
         NSString *userCity = [ud stringForKey:SERVER_CITY];
         if ([self.city isEqualToString:userCity]) {
-            popoverViewController.preferredContentSize = CGSizeMake(90, 238);
+            popoverViewController.preferredContentSize = CGSizeMake(92, 238);
             text = [NSArray arrayWithObjects:@"距离最近", @"星级最高", @"评论最多", @"人均最低", @"服务最好", @"环境最优", nil];
         } else {
-            popoverViewController.preferredContentSize = CGSizeMake(90, 197);
+            popoverViewController.preferredContentSize = CGSizeMake(92, 197);
             text = [NSArray arrayWithObjects:@"星级最高", @"评论最多", @"人均最低", @"服务最好", @"环境最优", nil];
         }
         popoverViewController.text = [[NSMutableArray alloc] initWithArray:text];

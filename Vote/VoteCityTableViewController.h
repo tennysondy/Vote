@@ -14,4 +14,6 @@ typedef void (^CityCallBack)(NSString *city);
 
 @property (strong, nonatomic) CityCallBack changeCity;
 
+@property (strong, nonatomic) NSString *identifier;
+
 @end

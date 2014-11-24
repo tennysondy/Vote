@@ -41,7 +41,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    sectionTitles = [[NSArray alloc] initWithObjects:@"名称", @"分类", @"城市", @"地点", nil];
+    sectionTitles = [[NSArray alloc] initWithObjects:@"名称", @"分类(此选项用于更细致地推荐兴趣话题)", @"城市", @"地点", nil];
     if ([self.defaultCategory length] > 0) {
         self.optionCatrgory = self.defaultCategory;
     }
@@ -333,11 +333,11 @@
     if ((NSNull *)[data objectForKey:DIANPING_NAME] != [NSNull null]) {
         NSString *name;
         NSString *prename = [data objectForKey:DIANPING_NAME];
-        if ((NSNull *)[data objectForKey:DIANPING_BRANCH_NAME] != [NSNull null]) {
-            NSString *subname = [data objectForKey:DIANPING_BRANCH_NAME];
-            name = [[NSString alloc] initWithFormat:@"%@(%@)", prename, subname];
-        } else {
+        NSString *subname = [data objectForKey:DIANPING_BRANCH_NAME];
+        if ([subname isEqualToString:@""]) {
             name = prename;
+        } else {
+            name = [[NSString alloc] initWithFormat:@"%@(%@)", prename, subname];
         }
         [self.optionAddress setObject:name forKey:SERVER_OPTIONS_ADDRESS];
     } else {

@@ -12,6 +12,7 @@
 #import "VoteBusinessDetailsHelper.h"
 #import "NSString+NSStringHelper.h"
 #import "VoteDealsDetailsViewController.h"
+#import "VoteWebViewController.h"
 
 @interface VoteOptionDetailsTableViewController ()
 {
@@ -28,6 +29,7 @@
 
 @property (strong, nonatomic) NSDictionary *businessInfo;
 @property (strong, nonatomic) NSMutableArray *commentsInfo;
+@property (strong ,nonatomic) NSString *commentsUrl;
 
 @property (strong, nonatomic) UILabel *loadingPrompt;
 
@@ -169,6 +171,7 @@
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if ([[responseObject objectForKey:DIANPING_STATUS] isEqualToString:@"OK"]) {
             self.commentsInfo = [[NSMutableArray alloc] initWithArray:[(NSDictionary *)responseObject objectForKey:DIANPING_REVIEWS]];
+            self.commentsUrl = [[(NSDictionary *)responseObject objectForKey:DIANPING_ADDITIONAL_INFO] objectForKey:DIANPING_MORE_REVIEWS_URL];
             commentsOK = YES;
             if (businessOK && commentsOK) {
                 [self.tableView reloadData];
@@ -200,7 +203,7 @@
         if ([self.commentsInfo count] > 0) {
             count++;
         }
-        return 1+count;//1为主题
+        return 1+count;//1为选项主题
     }
     return 1;
 }
@@ -216,7 +219,7 @@
                 return 1;
             }
             if (section == 1) {
-                return 3;
+                return 4;
             } else if (section == 2) {
                 if (hasCoupon || hasDeal) {
                     NSInteger count = 0;
@@ -239,11 +242,11 @@
                     rowNumOfSection2 = count;
                     return count;
                 } else {
-                    return [self.commentsInfo count];
+                    return [self.commentsInfo count] + 1;
                 }
 
             } else if (section == 3) {
-                return [self.commentsInfo count];
+                return [self.commentsInfo count] + 1;
             }
         }
     }
@@ -267,38 +270,43 @@
         UIFont *font = [UIFont boldSystemFontOfSize:ODTVC_NAME_FONT_SIZE];
         CGFloat height = [NSString calculateTextHeight:self.name font:font width:ODTVC_NAME_WIDTH];
         return height + 20;
-    } else if (indexPath.section == 1 && indexPath.row == 0) {
-        if (customFlag == YES) {
-            UIFont *font = [UIFont systemFontOfSize:ODTVC_CUSTOM_ADDR_FONT_SIZE];
-            CGFloat height = [NSString calculateTextHeight:self.address font:font width:ODTVC_CUSTOM_ADDR_WIDTH];
-
-            return height + 20;
-        } else {
-            NSString *text = [[NSString alloc] initWithFormat:@"%@(%@)", [self.businessInfo objectForKey:DIANPING_NAME], [self.businessInfo objectForKey:DIANPING_BRANCH_NAME]];
-            UIFont *font = [UIFont fontWithName:BDH_NAME_FONT size:BDH_NAME_FONT_SIZE];
-            CGFloat height1 = [NSString calculateTextHeight:text font:font width:BDH_NAME_WIDTH];
-            if (height1 < 20.0) {
-                height1 = 20.0;
+    } else if (indexPath.section == 1) {
+        if (indexPath.row == 0) {
+            if (customFlag == YES) {
+                UIFont *font = [UIFont systemFontOfSize:ODTVC_CUSTOM_ADDR_FONT_SIZE];
+                CGFloat height = [NSString calculateTextHeight:self.address font:font width:ODTVC_CUSTOM_ADDR_WIDTH];
+                
+                return height + 20;
+            } else {
+                NSString *text = [[NSString alloc] initWithFormat:@"%@(%@)", [self.businessInfo objectForKey:DIANPING_NAME], [self.businessInfo objectForKey:DIANPING_BRANCH_NAME]];
+                UIFont *font = [UIFont fontWithName:BDH_NAME_FONT size:BDH_NAME_FONT_SIZE];
+                CGFloat height1 = [NSString calculateTextHeight:text font:font width:BDH_NAME_WIDTH];
+                if (height1 < 20.0) {
+                    height1 = 20.0;
+                }
+                CGFloat height = BDH_NAME_COORDINATE_Y + height1 + 10.0 + BDH_S_PHOTO_HEIGHT + 10.0;
+                return height;
             }
-            CGFloat height = BDH_NAME_COORDINATE_Y + height1 + 10.0 + BDH_S_PHOTO_HEIGHT + 10.0;
-            return height;
+        } else if (indexPath.row == 1) {
+            NSString *text = [self.businessInfo objectForKey:DIANPING_ADDRESS];
+            UIFont *font = [UIFont fontWithName:BDH_ADDRESS_FONT size:BDH_ADDRESS_FONT_SIZE];
+            CGFloat height = [NSString calculateTextHeight:text font:font width:BDH_ADDRESS_WIDTH];
+            if (height < 30.0) {
+                height = 30.0;
+            }
+            return height + 20;
+            
+        } else if (indexPath.row == 2) {
+            NSString *text = [self.businessInfo objectForKey:DIANPING_TELEPHONE];
+            UIFont *font = [UIFont fontWithName:BDH_TELEPHONE_FONT size:BDH_TELEPHONE_FONT_SIZE];
+            CGFloat height = [NSString calculateTextHeight:text font:font width:BDH_TELEPHONE_WIDTH];
+            
+            return height + 20.0;
+            
+        } else {
+            //查看详情
+            return 44.0;
         }
-    } else if (indexPath.section == 1 && indexPath.row == 1) {
-        NSString *text = [self.businessInfo objectForKey:DIANPING_ADDRESS];
-        UIFont *font = [UIFont fontWithName:BDH_ADDRESS_FONT size:BDH_ADDRESS_FONT_SIZE];
-        CGFloat height = [NSString calculateTextHeight:text font:font width:BDH_ADDRESS_WIDTH];
-        if (height < 30.0) {
-            height = 30.0;
-        }
-        return height + 20;
-        
-    } else if (indexPath.section == 1 && indexPath.row == 2) {
-        NSString *text = [self.businessInfo objectForKey:DIANPING_TELEPHONE];
-        UIFont *font = [UIFont fontWithName:BDH_TELEPHONE_FONT size:BDH_TELEPHONE_FONT_SIZE];
-        CGFloat height = [NSString calculateTextHeight:text font:font width:BDH_TELEPHONE_WIDTH];
-        
-        return height + 20.0;
-        
     } else if (indexPath.section == 2) {
         if (hasCoupon || hasDeal) {
             if (hasCoupon) {
@@ -338,12 +346,18 @@
             }
 
         } else {
+            if (indexPath.row == [self.commentsInfo count]) {
+                return 44.0;
+            }
             NSString *text = [[self.commentsInfo objectAtIndex:indexPath.row] objectForKey:DIANPING_TEXT_EXCERPT];
             UIFont *font = [UIFont fontWithName:BDH_COMMENTS_TEXT_FONT size:BDH_COMMENTS_TEXT_FONT_SIZE];
             CGFloat height = [NSString calculateTextHeight:text font:font width:BDH_COMMENTS_TEXT_WIDTH];
             return BDH_COMMENTS_TEXT_COORDINATE_Y + height + 10;
         }
     } else if (indexPath.section == 3) {
+        if (indexPath.row == [self.commentsInfo count]) {
+            return 44.0;
+        }
         NSString *text = [[self.commentsInfo objectAtIndex:indexPath.row] objectForKey:DIANPING_TEXT_EXCERPT];
         UIFont *font = [UIFont fontWithName:BDH_COMMENTS_TEXT_FONT size:BDH_COMMENTS_TEXT_FONT_SIZE];
         CGFloat height = [NSString calculateTextHeight:text font:font width:BDH_COMMENTS_TEXT_WIDTH];
@@ -371,43 +385,54 @@
         }
         nameLabel.text = self.name;
 
-    } else if (indexPath.section == 1 && indexPath.row == 0) {
-        if (customFlag == YES) {
-            cell = [tableView dequeueReusableCellWithIdentifier:@"Option Custom Address" forIndexPath:indexPath];
-            UILabel *addressLabel;
-            if ([cell.contentView viewWithTag:ODTVC_CUSTOM_ADDR_TAG] == nil) {
-                addressLabel = [[UILabel alloc] initWithFrame:CGRectMake(ODTVC_CUSTOM_ADDR_COORDINATE_X, ODTVC_CUSTOM_ADDR_COORDINATE_Y, ODTVC_CUSTOM_ADDR_WIDTH, cell.frame.size.height - 20)];
-                addressLabel.tag = ODTVC_CUSTOM_ADDR_TAG;
-                addressLabel.font = [UIFont systemFontOfSize:ODTVC_CUSTOM_ADDR_FONT_SIZE];
-                [cell.contentView addSubview:addressLabel];
+    } else if (indexPath.section == 1) {
+        if (indexPath.row == 0) {
+            if (customFlag == YES) {
+                cell = [tableView dequeueReusableCellWithIdentifier:@"Option Custom Address" forIndexPath:indexPath];
+                UILabel *addressLabel;
+                if ([cell.contentView viewWithTag:ODTVC_CUSTOM_ADDR_TAG] == nil) {
+                    addressLabel = [[UILabel alloc] initWithFrame:CGRectMake(ODTVC_CUSTOM_ADDR_COORDINATE_X, ODTVC_CUSTOM_ADDR_COORDINATE_Y, ODTVC_CUSTOM_ADDR_WIDTH, cell.frame.size.height - 20)];
+                    addressLabel.tag = ODTVC_CUSTOM_ADDR_TAG;
+                    addressLabel.font = [UIFont systemFontOfSize:ODTVC_CUSTOM_ADDR_FONT_SIZE];
+                    [cell.contentView addSubview:addressLabel];
+                } else {
+                    addressLabel = (UILabel *)[cell.contentView viewWithTag:ODTVC_CUSTOM_ADDR_TAG];
+                }
+                addressLabel.text = self.address;
+                
             } else {
-                addressLabel = (UILabel *)[cell.contentView viewWithTag:ODTVC_CUSTOM_ADDR_TAG];
+                cell = [tableView dequeueReusableCellWithIdentifier:@"Business Basic Info" forIndexPath:indexPath];
+                [VoteBusinessDetailsHelper configureBasicCell:cell forRowAtIndexPath:indexPath withBusinessInfo:self.businessInfo];
+                //添加cell间的分割线
+                UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
+                v.backgroundColor = SEPARATOR_COLOR;
+                [cell.contentView addSubview:v];
             }
-            addressLabel.text = self.address;
-
-        } else {
-            cell = [tableView dequeueReusableCellWithIdentifier:@"Business Basic Info" forIndexPath:indexPath];
-            [VoteBusinessDetailsHelper configureBasicCell:cell forRowAtIndexPath:indexPath withBusinessInfo:self.businessInfo];
-            //添加cell间的分割线
+            
+        } else if (indexPath.row == 1) {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"Business Address" forIndexPath:indexPath];
+            [VoteBusinessDetailsHelper configureAddressCell:cell forRowAtIndexPath:indexPath withBusinessInfo:self.businessInfo];
             UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
-            v.backgroundColor = [UIColor lightGrayColor];
+            v.backgroundColor = SEPARATOR_COLOR;
+            [cell.contentView addSubview:v];
+            
+        } else if (indexPath.row == 2) {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"Business Telephone" forIndexPath:indexPath];
+            [VoteBusinessDetailsHelper configureTelephoneCell:cell forRowAtIndexPath:indexPath withBusinessInfo:self.businessInfo];
+            UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
+            v.backgroundColor = SEPARATOR_COLOR;
+            [cell.contentView addSubview:v];
+            
+        } else {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"Business Web Link" forIndexPath:indexPath];
+            cell.textLabel.text = @"查看商家详情";
+            cell.textLabel.font = [UIFont boldSystemFontOfSize:15.0f];
+            //cell.textLabel.textAlignment = NSTextAlignmentCenter;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
+            v.backgroundColor = SEPARATOR_COLOR;
             [cell.contentView addSubview:v];
         }
-        
-    } else if (indexPath.section == 1 && indexPath.row == 1) {
-        cell = [tableView dequeueReusableCellWithIdentifier:@"Business Address" forIndexPath:indexPath];
-        [VoteBusinessDetailsHelper configureAddressCell:cell forRowAtIndexPath:indexPath withBusinessInfo:self.businessInfo];
-        UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
-        v.backgroundColor = [UIColor lightGrayColor];
-        [cell.contentView addSubview:v];
-        
-    } else if (indexPath.section == 1 && indexPath.row == 2) {
-        cell = [tableView dequeueReusableCellWithIdentifier:@"Business Telephone" forIndexPath:indexPath];
-        [VoteBusinessDetailsHelper configureTelephoneCell:cell forRowAtIndexPath:indexPath withBusinessInfo:self.businessInfo];
-        UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
-        v.backgroundColor = [UIColor lightGrayColor];
-        [cell.contentView addSubview:v];
-        
     } else if (indexPath.section == 2) {
         if (hasCoupon || hasDeal) {
             //优惠券和团购信息
@@ -464,23 +489,41 @@
                 
             }
             UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
-            v.backgroundColor = [UIColor lightGrayColor];
+            v.backgroundColor = SEPARATOR_COLOR;
             [cell.contentView addSubview:v];
             
         } else {
             //如果没有优惠券和团购信息，则在section 2中显示评论
-            cell = [tableView dequeueReusableCellWithIdentifier:@"Business Comments" forIndexPath:indexPath];
-            [VoteBusinessDetailsHelper configureCommentsCell:cell forRowAtIndexPath:indexPath witCommentsInfo:self.commentsInfo];
+            if (indexPath.row == [self.commentsInfo count]) {
+                cell = [tableView dequeueReusableCellWithIdentifier:@"Comments Web Link" forIndexPath:indexPath];
+                cell.textLabel.text = @"查看更多评论";
+                cell.textLabel.font = [UIFont boldSystemFontOfSize:15.0f];
+                //cell.textLabel.textAlignment = NSTextAlignmentCenter;
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            } else {
+                cell = [tableView dequeueReusableCellWithIdentifier:@"Business Comments" forIndexPath:indexPath];
+                [VoteBusinessDetailsHelper configureCommentsCell:cell forRowAtIndexPath:indexPath witCommentsInfo:self.commentsInfo];
+            }
+
             UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
-            v.backgroundColor = [UIColor lightGrayColor];
+            v.backgroundColor = SEPARATOR_COLOR;
             [cell.contentView addSubview:v];
         }
     } else if (indexPath.section == 3) {
         //如果有优惠券和团购信息，评论放在section 3中
-        cell = [tableView dequeueReusableCellWithIdentifier:@"Business Comments" forIndexPath:indexPath];
-        [VoteBusinessDetailsHelper configureCommentsCell:cell forRowAtIndexPath:indexPath witCommentsInfo:self.commentsInfo];
+        if (indexPath.row == [self.commentsInfo count]) {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"Comments Web Link" forIndexPath:indexPath];
+            cell.textLabel.text = @"查看更多评论";
+            cell.textLabel.font = [UIFont boldSystemFontOfSize:15.0f];
+            //cell.textLabel.textAlignment = NSTextAlignmentCenter;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        } else {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"Business Comments" forIndexPath:indexPath];
+            [VoteBusinessDetailsHelper configureCommentsCell:cell forRowAtIndexPath:indexPath witCommentsInfo:self.commentsInfo];
+        }
+        
         UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
-        v.backgroundColor = [UIColor lightGrayColor];
+        v.backgroundColor = SEPARATOR_COLOR;
         [cell.contentView addSubview:v];
     }
     
@@ -489,6 +532,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section == 1) {
+        if (indexPath.row == 3) {
+            [self performSegueWithIdentifier:@"Business Web Details" sender:indexPath];
+        }
+    }
     if (indexPath.section == 2) {
         if (hasCoupon || hasDeal) {
             if (hasCoupon) {
@@ -522,8 +570,19 @@
                     [self performSegueWithIdentifier:@"Deals Web" sender:indexPath];
                 }
             }
+        } else {
+            if (indexPath.row == [self.commentsInfo count]) {
+                [self performSegueWithIdentifier:@"Business Web Details" sender:indexPath];
+            }
+        }
+
+    }
+    if (indexPath.section == 3) {
+        if (indexPath.row == [self.commentsInfo count]) {
+            [self performSegueWithIdentifier:@"Business Web Details" sender:indexPath];
         }
     }
+    
     [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
@@ -535,8 +594,8 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    NSIndexPath *indexPath = (NSIndexPath *)sender;
     if ([segue.identifier isEqual:@"Deals Web"]) {
-        NSIndexPath *indexPath = (NSIndexPath *)sender;
         VoteDealsDetailsViewController *vc = [segue destinationViewController];
         if (hasCoupon && indexPath.row == rowNumOfSection2 - 1) {
             vc.url = [self.businessInfo objectForKey:DIANPING_COUPON_URL];
@@ -544,6 +603,16 @@
             vc.url = [[[self.businessInfo objectForKey:DIANPING_DEALS] objectAtIndex:indexPath.row] objectForKey:DIANPING_DEALS_URL];
         }
 
+    }
+    if ([segue.identifier isEqualToString:@"Business Web Details"]) {
+        VoteWebViewController *vc = [segue destinationViewController];
+        if (indexPath.section == 1) {
+            vc.url = [self.businessInfo objectForKey:DIANPING_BUSINESS_URL];
+            vc.navTitle = @"商家详情";
+        } else {
+            vc.navTitle = @"评论详情";
+            vc.url = self.commentsUrl;
+        }
     }
     //设置返回键的标题
     UIBarButtonItem *backItem = [[UIBarButtonItem alloc]init];

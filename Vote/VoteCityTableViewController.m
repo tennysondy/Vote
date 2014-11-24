@@ -7,6 +7,7 @@
 //
 
 #import "VoteCityTableViewController.h"
+#import "VoteSetUserInfoTableViewController.h"
 
 @interface VoteCityTableViewController ()
 
@@ -136,7 +137,20 @@
     if (self.changeCity) {
         NSString *city = [[self.totalCities objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
         self.changeCity(city);
-        [self dismissViewControllerAnimated:YES completion:nil];
+        if ([self.identifier isEqualToString:@"User Change City"]) {
+            NSArray *navArr = self.navigationController.viewControllers;
+            for (UIViewController *nav in navArr)
+            {
+                if ([nav isKindOfClass:[VoteSetUserInfoTableViewController class]])
+                {
+                    [self.navigationController popToViewController:nav animated:YES];
+                    break;
+                }
+            }
+        } else {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
+        
     }
 }
 

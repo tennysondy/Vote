@@ -82,7 +82,9 @@
         NSSortDescriptor *sortDescriptorRows = [NSSortDescriptor sortDescriptorWithKey:VOTE_OPTIONS_ORDER ascending:YES];
         [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortDescriptorRows, nil]];
         
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"whichVote.voteID == %@", self.voteId];
+        NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+        NSString *username = [ud stringForKey:USERNAME];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(whichVote.voteID) == %@ AND (whichVote.whoseVote.username == %@)", self.voteId, username];
         [fetchRequest setPredicate:predicate];
         
         [fetchRequest setFetchBatchSize:0];
@@ -111,6 +113,9 @@
         self.document = database;
         self.managedObjectContext = database.managedObjectContext;
         self.aVote = [VotesInfo fetchVotesWithVoteID:self.voteId withContext:self.managedObjectContext];
+        if (self.aVote != nil) {
+            self.aVote.unreadMsgFlag = [NSNumber numberWithBool:NO];
+        }
         votersTotalNum = [self getVotersNumber];
         [self.tableView reloadData];
         //[self fetchVotesInfoFromServer];
@@ -124,18 +129,19 @@
     self.tableView.separatorInset = UIEdgeInsetsZero;
     self.tableView.separatorColor = SEPARATOR_COLOR;
     
+    self.loadingViewUpdateFlag = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self fetchVotesInfoFromServer];
 
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [self fetchVotesInfoFromServer];
     self.uTimer = [NSTimer timerWithTimeInterval:0.05f target:self selector:@selector(updateCount:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:self.uTimer forMode:NSRunLoopCommonModes];
     [self.uTimer fire];
@@ -194,14 +200,14 @@
     //titleView.layer.borderColor = [UIColor whiteColor].CGColor;
     //titleView.layer.borderWidth = 1.0;
     titleView.backgroundColor = [UIColor clearColor];
-    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 3, 24, 24)];
+    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(10, 3, 24, 24)];
     [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
     [activityIndicator startAnimating];
     [titleView addSubview:activityIndicator];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(30, 0, 105, 30)];
-    label.text = @"更新数据中...";
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(40, 0, 105, 30)];
+    label.text = @"同步中...";
     label.textColor = [UIColor whiteColor];
-    label.font = [UIFont boldSystemFontOfSize:17.0f];
+    label.font = [UIFont boldSystemFontOfSize:19.0f];
     //label.layer.borderColor = [UIColor whiteColor].CGColor;
     //label.layer.borderWidth = 1.0;
     [titleView addSubview:label];
@@ -218,7 +224,9 @@
 
 - (void)fetchVotesInfoFromServer
 {
-    [self startLoadingView];
+    if (self.loadingViewUpdateFlag == YES) {
+        [self startLoadingView];
+    }
     NSString *votesInfoURL = [[NSString alloc] initWithFormat:@"http://115.28.228.41/vote/get_vote_detail.php"];
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSString *username = [ud objectForKey:USERNAME];
@@ -230,6 +238,7 @@
         NSLog(@"operation: %@", operation);
         NSLog(@"responseObject: %@", responseObject);
         [self stopLoadingView];
+        self.loadingViewUpdateFlag = NO;
         NSLog(@"vote update tag: %@", self.aVote.voteUpdateTag);
         NSNumber *voteUpdateTag;
         if ( [responseObject objectForKey:SERVER_VOTE_VOTE_TIMESTAMP] != nil && (NSNull *)[responseObject objectForKey:SERVER_VOTE_VOTE_TIMESTAMP] != [NSNull null] ) {
@@ -244,7 +253,10 @@
             if (self.managedObjectContext) {
                 [self.managedObjectContext performBlock:^{
                     [VotesInfo updateDatabaseWithDetails:(NSDictionary *)responseObject withContext:self.managedObjectContext withQueue:self.imagesDownloadQueue];
-                    [self.managedObjectContext save:NULL];
+                    [self.tableView reloadData];
+                    [self.document saveToURL:self.document.fileURL forSaveOperation:UIDocumentSaveForOverwriting completionHandler:^(BOOL success) {
+                        
+                    }];
                     /*
                      memset(timerCount, 0, sizeof(timerCount));
                      [self.tableView reloadData];
@@ -253,7 +265,7 @@
                 }];
             }
         });
-
+        
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"connect network failure in first table view!");
@@ -261,6 +273,7 @@
         NSLog(@"operation: %@", operation.responseString);
         NSLog(@"Error: %@", error);
         [self stopLoadingView];
+        self.loadingViewUpdateFlag = NO;
     }];
 }
 
@@ -394,6 +407,7 @@
             subject.text = self.aVote.title;
             subject.font = [UIFont boldSystemFontOfSize:17.0];
             [cell.contentView addSubview:subject];
+            NSLog(@"title = %@, %@", subject.text, self.aVote.title);
         }
 
     } else if (indexPath.section == 1) {
@@ -486,7 +500,10 @@
             } else {
                 deadline = (UILabel *)[cell.contentView viewWithTag:ADTVC_DEADLINE_TAG];
             }
-            if ([self.aVote.isEnd boolValue] == YES) {
+            NSDate *now = [NSDate date];
+            //NSLog(@"now = %@, endDate = %@", now, self.endTime);
+            // has the target time passed?
+            if ([self.aVote.isEnd boolValue] == YES || [[self.aVote.endTime earlierDate:now] isEqualToDate:self.aVote.endTime] ) {
                 deadline.text = @"活动已结束";
             } else {
                 deadline.text = [NSString stringWithFormat:@"距结束还有:%@", self.endTime];
@@ -681,7 +698,10 @@
     NSDate *now = [NSDate date];
     //NSLog(@"now = %@, endDate = %@", now, self.endTime);
     // has the target time passed?
-    if ([self.aVote.endTime earlierDate:now] == self.aVote.endTime) {
+    NSLog(@"now = %@",now);
+    if ([[self.aVote.endTime earlierDate:now] isEqualToDate:self.aVote.endTime]) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:3 inSection:1];
+        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
         [self.timer invalidate];
     } else {
         NSUInteger flags = NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
@@ -717,6 +737,9 @@
     if ([segue.identifier isEqualToString:@"Choose Options"]) {
         VoteChooseOptionsTableViewController *vc = (VoteChooseOptionsTableViewController *)[segue destinationViewController];
         vc.voteId = self.voteId;
+        vc.updateLoadingView = ^{
+            self.loadingViewUpdateFlag = YES;
+        };
     } else if ([segue.identifier isEqualToString:@"Option Details"]) {
         NSLog(@"%lu, %ld", (unsigned long)self.selectedIndexPath.section, (long)self.selectedIndexPath.row);
         Options *aOption = [self.fetchedResultsController objectAtIndexPath:self.selectedIndexPath];

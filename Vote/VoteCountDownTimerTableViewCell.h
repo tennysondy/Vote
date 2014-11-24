@@ -22,7 +22,7 @@ typedef void (^VoteExpire)(void);
 @property (strong, nonatomic) NSString *imageUrl;
 @property (strong, nonatomic) NSTimer *timer;
 @property (strong, nonatomic) NSDate *endTime;
-@property (strong, nonatomic) NSString *title;
+@property (strong, nonatomic) NSMutableAttributedString *title;
 @property (strong, nonatomic) NSString *category;
 @property (strong, nonatomic) NSNumber *anonymous;
 @property (strong, nonatomic) NSNumber *thePublic;

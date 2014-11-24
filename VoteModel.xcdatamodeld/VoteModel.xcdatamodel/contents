@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13E28" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6252" systemVersion="13F34" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="FailedDeletedFriends" representedClassName="FailedDeletedFriends" syncable="YES">
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="whoseDeletedFriends" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Users" inverseName="deletedFriends" inverseEntity="Users" syncable="YES"/>
@@ -84,6 +84,7 @@
         <attribute name="startTime" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="thePublic" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unreadMsgFlag" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="voteDescription" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="voteID" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="voteUpdateFlag" optional="YES" attributeType="Boolean" syncable="YES"/>
@@ -105,7 +106,7 @@
         <element name="Friends" positionX="-65" positionY="-162" width="128" height="270"/>
         <element name="Options" positionX="-396" positionY="284" width="128" height="148"/>
         <element name="Users" positionX="-504" positionY="-135" width="153" height="373"/>
-        <element name="VotesInfo" positionX="-74" positionY="182" width="128" height="403"/>
+        <element name="VotesInfo" positionX="-74" positionY="182" width="128" height="420"/>
         <element name="VotesUserSetting" positionX="-261" positionY="230" width="128" height="103"/>
     </elements>
 </model>

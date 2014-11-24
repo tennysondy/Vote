@@ -97,7 +97,12 @@
     NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
     NSString *deviceToken = [ud objectForKey:DEVICE_TOKEN];
     NSLog(@"%@", deviceToken);
-    NSDictionary *para = @{SERVER_USERNAME:self.usenameTextField.text, SERVER_PASSWORD:self.passwordTextField.text, DEVICE_TOKEN:deviceToken};
+    NSDictionary *para;
+    if (deviceToken == nil) {
+        para = @{SERVER_USERNAME:self.usenameTextField.text, SERVER_PASSWORD:self.passwordTextField.text, DEVICE_TOKEN:[NSNull null]};
+    } else {
+        para = @{SERVER_USERNAME:self.usenameTextField.text, SERVER_PASSWORD:self.passwordTextField.text, DEVICE_TOKEN:deviceToken};
+    }
     NSLog(@"URL para = %@", para);
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] init];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];

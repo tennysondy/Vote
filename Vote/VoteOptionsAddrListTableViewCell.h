@@ -16,6 +16,7 @@
 @property (strong, nonatomic) UILabel *avgPrice;
 @property (strong, nonatomic) UILabel *rgnCtgry;  //region and category
 @property (strong, nonatomic) UILabel *distance;
+//团购和优惠券图片
 @property (strong, nonatomic) UIImageView *firstView;
 @property (strong, nonatomic) UIImageView *secondView;
 
@@ -83,6 +84,6 @@
 #define OALTVC_DISTANCE_WIDTH                   60
 #define OALTVC_DISTANCE_HEIGHT                  12
 #define OALTVC_DISTANCE_FONT                    @"Verdana"
-#define OALTVC_DISTANCE_FONT_SIZE               12
+#define OALTVC_DISTANCE_FONT_SIZE               11
 
 #define OALTVC_CELL_HEIGHT                      82.0 //RGN_CTGRY_COORDINATE_Y + RGN_CTGRY_HEIGHT + 10

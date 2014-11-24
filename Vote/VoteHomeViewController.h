@@ -13,6 +13,12 @@
     BOOL authenticated;
 }
 
-#define HVC_PRELOAD_VIEW_TAG       1001
+@property (strong, nonatomic) NSTimer *uTimer;
+
+
+- (void)pauseTimer;
+- (void)resumeTimer;
 
 @end
+
+#define HVC_PRELOAD_VIEW_TAG       1001

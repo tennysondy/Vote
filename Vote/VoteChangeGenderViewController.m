@@ -80,13 +80,16 @@
         if (self.genderCallBack) {
             self.genderCallBack(self.gender);
         }
-        UIAlertView *alert = nil;
-        alert = [[UIAlertView alloc] initWithTitle:@"性别更新成功"
-                                           message:nil
-                                          delegate:nil
-                                 cancelButtonTitle:@"确定"
-                                 otherButtonTitles:nil];
-        [alert show];
+        if (self.view.window != nil) {
+            UIAlertView *alert = nil;
+            alert = [[UIAlertView alloc] initWithTitle:@"性别更新成功"
+                                               message:nil
+                                              delegate:self
+                                     cancelButtonTitle:@"确定"
+                                     otherButtonTitles:nil];
+            [alert show];
+        }
+
     } failure:^(AFHTTPRequestOperation *operation, NSError *error){
         NSLog(@"operation: %@", operation);
         NSLog(@"operation: %@", operation.responseString);
@@ -95,13 +98,16 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             self.rightBarButtonItem.customView = nil;
         });
-        UIAlertView *alert = nil;
-        alert = [[UIAlertView alloc] initWithTitle:@"性别更新失败"
-                                           message:@"无网络连接或服务器出错，请稍后再试"
-                                          delegate:nil
-                                 cancelButtonTitle:@"确定"
-                                 otherButtonTitles:nil];
-        [alert show];
+        if (self.view.window != nil) {
+            UIAlertView *alert = nil;
+            alert = [[UIAlertView alloc] initWithTitle:@"性别更新失败"
+                                               message:@"无网络连接或服务器出错，请稍后再试"
+                                              delegate:nil
+                                     cancelButtonTitle:@"确定"
+                                     otherButtonTitles:nil];
+            [alert show];
+        }
+
     }];
 }
 
@@ -151,6 +157,12 @@
         self.gender = @"f";
     }
     [self.genderTableView reloadData];
+}
+
+#pragma mark - AlertView Delegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)didReceiveMemoryWarning

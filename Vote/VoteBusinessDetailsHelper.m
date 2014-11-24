@@ -23,14 +23,19 @@
     //商户名称
     UILabel *name;
     if ([cell.contentView viewWithTag:BDH_NAME_TAG] == nil) {
-        text = [[NSString alloc] initWithFormat:@"%@(%@)", [businessInfo objectForKey:DIANPING_NAME], [businessInfo objectForKey:DIANPING_BRANCH_NAME]];
+        if ([[businessInfo objectForKey:DIANPING_BRANCH_NAME] isEqualToString:@""]) {
+            text = [[NSString alloc] initWithFormat:@"%@", [businessInfo objectForKey:DIANPING_NAME]];
+        } else {
+            text = [[NSString alloc] initWithFormat:@"%@(%@)", [businessInfo objectForKey:DIANPING_NAME], [businessInfo objectForKey:DIANPING_BRANCH_NAME]];
+        }
+        
         font = [UIFont fontWithName:BDH_NAME_FONT size:BDH_NAME_FONT_SIZE];
         height = [NSString calculateTextHeight:text font:font width:BDH_NAME_WIDTH];
         rect = CGRectMake(BDH_NAME_COORDINATE_X, BDH_NAME_COORDINATE_Y, BDH_NAME_WIDTH, height);
         name = [[UILabel alloc] initWithFrame:rect];
         name.tag = BDH_NAME_TAG;
         name.font = font;
-        name.text = [[NSString alloc] initWithFormat:@"%@(%@)", [businessInfo objectForKey:DIANPING_NAME], [businessInfo objectForKey:DIANPING_BRANCH_NAME]];
+        name.text = text;
         name.lineBreakMode = NSLineBreakByWordWrapping;
         name.numberOfLines = 0;
         [cell.contentView addSubview:name];
@@ -90,7 +95,13 @@
         productScore.tag = BDH_PRODUCT_SCORE_TAG;
         productScore.font = [UIFont systemFontOfSize:BDH_PRODUCT_SCORE_FONT];
         if (!((NSNull *)[businessInfo objectForKey:DIANPING_PRODUCT_SCORE] == [NSNull null])) {
-            productScore.text = [[NSString alloc] initWithFormat:@"总体: %@", [businessInfo objectForKey:DIANPING_PRODUCT_SCORE]];
+            NSString *tmp = [[NSString alloc] initWithFormat:@"总体: %@", [businessInfo objectForKey:DIANPING_PRODUCT_SCORE]];
+            if ([tmp length] > 7) {
+                productScore.text = [tmp substringToIndex:7];
+            } else {
+                productScore.text = tmp;
+            }
+            NSLog(@"%@", productScore.text);
         } else {
             productScore.text = @"总体: 0.0";
         }
@@ -104,7 +115,13 @@
         decorationScore.tag = BDH_DECORATION_SCORE_TAG;
         decorationScore.font = [UIFont systemFontOfSize:BDH_DECORATION_SCORE_FONT];
         if (!((NSNull *)[businessInfo objectForKey:DIANPING_DECORATION_SCORE] == [NSNull null])) {
-            decorationScore.text = [[NSString alloc] initWithFormat:@"环境: %@", [businessInfo objectForKey:DIANPING_DECORATION_SCORE]];
+            NSString *tmp = [[NSString alloc] initWithFormat:@"环境: %@", [businessInfo objectForKey:DIANPING_DECORATION_SCORE]];
+            if ([tmp length] > 7) {
+                decorationScore.text = [tmp substringToIndex:7];
+            } else {
+                decorationScore.text = tmp;
+            }
+            NSLog(@"%@", decorationScore.text);
         } else {
             decorationScore.text = @"环境: 0.0";
         }
@@ -118,7 +135,13 @@
         serviceScore.tag = BDH_SERVICE_SCORE_TAG;
         serviceScore.font = [UIFont systemFontOfSize:BDH_DECORATION_SCORE_FONT];
         if (!((NSNull *)[businessInfo objectForKey:DIANPING_SERVICE_SCORE] == [NSNull null])) {
-            serviceScore.text = [[NSString alloc] initWithFormat:@"服务: %@", [businessInfo objectForKey:DIANPING_SERVICE_SCORE]];
+            NSString *tmp = [[NSString alloc] initWithFormat:@"服务: %@", [businessInfo objectForKey:DIANPING_SERVICE_SCORE]];
+            if ([tmp length] > 7) {
+                serviceScore.text = [tmp substringToIndex:7];
+            } else {
+                serviceScore.text = tmp;
+            }
+            NSLog(@"%@", serviceScore.text);
         } else {
             serviceScore.text = @"服务: 0.0";
         }

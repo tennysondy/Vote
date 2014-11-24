@@ -786,9 +786,18 @@
                                     <segue destination="Ow2-aw-D3h" kind="custom" identifier="Change Sort Type" customClass="WYStoryboardPopoverSegue" id="S74-uV-aln"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oVI-HP-czD">
+                                <rect key="frame" x="0.0" y="550" width="320" height="18"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="18" id="7iZ-P8-6JM"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="oVI-HP-czD" secondAttribute="trailing" id="DOA-z6-IQv"/>
+                            <constraint firstAttribute="bottom" secondItem="oVI-HP-czD" secondAttribute="bottom" id="Dhk-uH-R3l"/>
+                            <constraint firstItem="oVI-HP-czD" firstAttribute="leading" secondItem="NrR-HD-OEc" secondAttribute="leading" id="FJI-ZI-wTt"/>
                             <constraint firstItem="TCr-Ep-oAo" firstAttribute="top" secondItem="NrR-HD-OEc" secondAttribute="top" constant="64" id="qLS-no-7IF"/>
                             <constraint firstAttribute="trailing" secondItem="TCr-Ep-oAo" secondAttribute="trailing" id="wTr-Mh-f92"/>
                         </constraints>
@@ -801,6 +810,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="dpLogo" destination="oVI-HP-czD" id="yRp-6C-5zb"/>
                         <outlet property="rightBarButtonItem" destination="JHo-bi-c6d" id="vUT-Tn-Bw8"/>
                         <outlet property="sortBtn" destination="TCr-Ep-oAo" id="gKo-8g-Tjc"/>
                         <segue destination="Lqa-Sw-OvV" kind="push" identifier="Business Details" id="3Q0-l8-qwS"/>
@@ -846,10 +856,10 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Comments" id="JfK-my-vbu">
-                                <rect key="frame" x="0.0" y="251" width="320" height="44"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Web Link" id="nax-SM-ZKJ">
+                                <rect key="frame" x="0.0" y="383" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="JfK-my-vbu" id="E4N-rF-766">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="nax-SM-ZKJ" id="rg0-ot-agx">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
@@ -878,6 +888,22 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Comments" id="JfK-my-vbu">
+                                <rect key="frame" x="0.0" y="251" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="JfK-my-vbu" id="E4N-rF-766">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Comments Web Link" id="r3i-PK-eOq">
+                                <rect key="frame" x="0.0" y="383" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="r3i-PK-eOq" id="8f2-sm-JzS">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="Lqa-Sw-OvV" id="9Qy-4g-LpZ"/>
@@ -893,6 +919,7 @@
                     </navigationItem>
                     <connections>
                         <segue destination="FMu-JT-tpR" kind="push" identifier="Deals Web" id="NP1-bK-1Qi"/>
+                        <segue destination="9Ji-wZ-q8C" kind="push" identifier="Business Web Details" id="8v9-Mj-OOE"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ydt-cF-3kZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -997,10 +1024,10 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Comments" id="dVr-NN-bAj">
-                                <rect key="frame" x="0.0" y="218" width="320" height="44"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Web Link" id="vJm-QS-gyC">
+                                <rect key="frame" x="0.0" y="350" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dVr-NN-bAj" id="VWh-uN-ioz">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="vJm-QS-gyC" id="dxb-eH-6w0">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
@@ -1021,10 +1048,26 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Check All Deals" id="vJm-QS-gyC">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Check All Deals" id="gcW-mY-rsb">
                                 <rect key="frame" x="0.0" y="350" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="vJm-QS-gyC" id="dxb-eH-6w0">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gcW-mY-rsb" id="gyU-9Z-S9r">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Comments" id="dVr-NN-bAj">
+                                <rect key="frame" x="0.0" y="218" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dVr-NN-bAj" id="VWh-uN-ioz">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Comments Web Link" id="pXY-dI-Jzs">
+                                <rect key="frame" x="0.0" y="350" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pXY-dI-Jzs" id="fLQ-Yw-vEH">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
@@ -1044,11 +1087,31 @@
                     </navigationItem>
                     <connections>
                         <segue destination="FMu-JT-tpR" kind="push" identifier="Deals Web" id="4RV-qG-ba8"/>
+                        <segue destination="9Ji-wZ-q8C" kind="push" identifier="Business Web Details" id="UKo-ZC-qSY"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nhn-7f-5jK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3941" y="-1763"/>
+        </scene>
+        <!--Vote Web View Controller-->
+        <scene sceneID="uwf-FE-lPW">
+            <objects>
+                <viewController id="9Ji-wZ-q8C" customClass="VoteWebViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="kV0-5E-Gl4"/>
+                        <viewControllerLayoutGuide type="bottom" id="jBO-Sf-7SS"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Axl-2v-xN7">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="6vi-rm-blJ"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8te-XY-70J" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4949" y="-1125"/>
         </scene>
         <!--Vote Home View Controller-->
         <scene sceneID="Vex-rW-GRa">
@@ -1336,10 +1399,10 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Comments" id="am4-0s-Qt9">
-                                <rect key="frame" x="0.0" y="339" width="320" height="44"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Web Link" id="T3U-2v-XPa">
+                                <rect key="frame" x="0.0" y="471" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="am4-0s-Qt9" id="Vl0-2l-bhQ">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="T3U-2v-XPa" id="O1L-Dz-7Og">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
@@ -1368,6 +1431,22 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Comments" id="am4-0s-Qt9">
+                                <rect key="frame" x="0.0" y="339" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="am4-0s-Qt9" id="Vl0-2l-bhQ">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Comments Web Link" id="sjy-M1-52T">
+                                <rect key="frame" x="0.0" y="471" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sjy-M1-52T" id="xnh-GG-XMh">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="Djv-r8-akZ" id="oGa-JY-Rak"/>
@@ -1377,6 +1456,7 @@
                     <navigationItem key="navigationItem" title="详细信息" id="ELE-0t-OKG"/>
                     <connections>
                         <segue destination="FMu-JT-tpR" kind="push" identifier="Deals Web" id="lM6-H8-JT8"/>
+                        <segue destination="9Ji-wZ-q8C" kind="push" identifier="Business Web Details" id="uJm-7L-CbV"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="v5B-qY-Adn" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1427,7 +1507,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fMT-3Y-yHv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4525" y="-377"/>
+            <point key="canvasLocation" x="4949" y="-369"/>
         </scene>
         <!--添加好友-->
         <scene sceneID="G4k-IY-2j8">
@@ -1568,10 +1648,40 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="个人信息" id="Qlk-Vl-zEF"/>
+                    <connections>
+                        <segue destination="vi6-eT-j54" kind="push" identifier="User Change City" id="T4s-6m-kj8"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nwy-04-ajK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1725" y="1881"/>
+        </scene>
+        <!--城市列表-->
+        <scene sceneID="c1S-4q-eGY">
+            <objects>
+                <tableViewController id="vi6-eT-j54" customClass="VoteCityTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Se3-j2-kEG">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="City" id="0Y4-A0-FwX">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0Y4-A0-FwX" id="b5a-1Y-2QW">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="vi6-eT-j54" id="lR1-Sh-xkk"/>
+                            <outlet property="delegate" destination="vi6-eT-j54" id="O7R-Wi-vSK"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="城市列表" id="Lu4-bB-TEu"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="YJe-aT-hpP" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2217" y="1881"/>
         </scene>
         <!--Vote Change Gender View Controller-->
         <scene sceneID="eI4-wp-jGr">
@@ -1695,7 +1805,7 @@
                                     <constraint firstAttribute="width" constant="125" id="N2X-aP-tVK"/>
                                     <constraint firstAttribute="height" constant="21" id="aUE-le-E5D"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -1914,7 +2024,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="活动详情" id="8FL-OJ-T0b">
-                        <barButtonItem key="rightBarButtonItem" image="good44.png" id="lfi-Qm-GlB">
+                        <barButtonItem key="rightBarButtonItem" image="good22.png" id="lfi-Qm-GlB">
                             <connections>
                                 <action selector="good:" destination="Fte-kE-Joc" id="AmH-zc-TPw"/>
                             </connections>
@@ -2010,6 +2120,22 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Business Web Link" id="Cw6-5H-bZZ">
+                                <rect key="frame" x="0.0" y="471" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Cw6-5H-bZZ" id="TeQ-RL-USs">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Comments Web Link" id="gDy-xY-8xd">
+                                <rect key="frame" x="0.0" y="471" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gDy-xY-8xd" id="ZJK-K7-1of">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="U0R-yr-fG7" id="qTd-01-GWj"/>
@@ -2019,6 +2145,7 @@
                     <navigationItem key="navigationItem" title="详细信息" id="x5B-vh-AVF"/>
                     <connections>
                         <segue destination="FMu-JT-tpR" kind="push" identifier="Deals Web" id="Jrx-f2-B7f"/>
+                        <segue destination="9Ji-wZ-q8C" kind="push" identifier="Business Web Details" id="dzz-G2-1aB"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QAT-jj-HMV" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2305,7 +2432,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="good44.png" width="22" height="22"/>
+        <image name="good22.png" width="22" height="22"/>
         <image name="loginLogo.png" width="280" height="140"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
@@ -2314,8 +2441,9 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="lM6-H8-JT8"/>
         <segue reference="eHp-Bb-53y"/>
-        <segue reference="LgQ-pj-KCJ"/>
+        <segue reference="Xh8-3C-7gw"/>
+        <segue reference="4RV-qG-ba8"/>
+        <segue reference="UKo-ZC-qSY"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -31,6 +31,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.theNewScreenname.text = self.nameText;
     [self.theNewScreenname becomeFirstResponder];
 }
 
@@ -65,13 +66,16 @@
         if (self.theNewScreenNameCallBack) {
             self.theNewScreenNameCallBack(self.theNewScreenname.text);
         }
-        UIAlertView *alert = nil;
-        alert = [[UIAlertView alloc] initWithTitle:@"昵称更新成功"
-                                           message:nil
-                                          delegate:nil
-                                 cancelButtonTitle:@"确定"
-                                 otherButtonTitles:nil];
-        [alert show];
+        if (self.view.window != nil) {
+            UIAlertView *alert = nil;
+            alert = [[UIAlertView alloc] initWithTitle:@"昵称更新成功"
+                                               message:nil
+                                              delegate:self
+                                     cancelButtonTitle:@"确定"
+                                     otherButtonTitles:nil];
+            [alert show];
+        }
+
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error){
         NSLog(@"operation: %@", operation);
@@ -81,13 +85,16 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             self.rightBarButtonItem.customView = nil;
         });
-        UIAlertView *alert = nil;
-        alert = [[UIAlertView alloc] initWithTitle:@"昵称更新失败"
-                                           message:@"无网络连接或服务器出错，请稍后再试"
-                                          delegate:nil
-                                 cancelButtonTitle:@"确定"
-                                 otherButtonTitles:nil];
-        [alert show];
+        if (self.view.window != nil) {
+            UIAlertView *alert = nil;
+            alert = [[UIAlertView alloc] initWithTitle:@"昵称更新失败"
+                                               message:@"无网络连接或服务器出错，请稍后再试"
+                                              delegate:nil
+                                     cancelButtonTitle:@"确定"
+                                     otherButtonTitles:nil];
+            [alert show];
+        }
+
     }];
 
 }
@@ -170,6 +177,12 @@
 {
     [textField resignFirstResponder];
     return YES;
+}
+
+#pragma mark - AlertView Delegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)didReceiveMemoryWarning

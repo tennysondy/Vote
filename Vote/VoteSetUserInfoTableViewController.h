@@ -18,4 +18,5 @@
 #define SUITVC_HEAD_IMG_TAG            1001
 #define SUITVC_SCREEN_NAME_TAG         1002
 #define SUITVC_GENDER_TAG              1003
-#define SUITVC_SIGNATURE_TAG           1004
+#define SUITVC_CITY_TAG                1004
+#define SUITVC_SIGNATURE_TAG           1005

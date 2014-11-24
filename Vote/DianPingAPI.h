@@ -63,7 +63,10 @@
 #define DIANPING_COUPON_ID           @"coupon_id"
 #define DIANPING_COUPON_DESCR        @"coupon_description"
 #define DIANPING_COUPON_URL          @"coupon_url"
+#define DIANPING_BUSINESS_URL        @"business_url"
 //用户点评参数
 #define DIANPING_REVIEWS             @"reviews"
 #define DIANPING_USER_NICKNAME       @"user_nickname"
 #define DIANPING_TEXT_EXCERPT        @"text_excerpt"
+#define DIANPING_ADDITIONAL_INFO     @"additional_info"
+#define DIANPING_MORE_REVIEWS_URL    @"more_reviews_url"

@@ -188,7 +188,7 @@
     //添加cell间的分割线
     CGFloat sepratorHeight = cell.frame.size.height - 0.5;
     UIView *v = [[UIView alloc] initWithFrame:CGRectMake(70.0, sepratorHeight, 250.0, 0.5)];
-    v.backgroundColor = [UIColor lightGrayColor];
+    v.backgroundColor = SEPARATOR_COLOR;
     [cell.contentView addSubview:v];
     //判断是否为friend
     if ([self.strangerSet containsObject:indexPath] == YES) {
@@ -251,9 +251,9 @@
     NSString *gender = [[self.friendReqInfo objectAtIndex:indexPath.row] objectForKey:SERVER_GENDER];
     UIImage *headImage;
     if ([gender isEqualToString:@"m"]) {
-        headImage = [UIImage imageNamed:@"defaultMaleHeadImage80.png"];
+        headImage = [UIImage imageNamed:@"defaultMaleHeadImage40.png"];
     } else {
-        headImage = [UIImage imageNamed:@"defaultFemaleHeadImage80.png"];
+        headImage = [UIImage imageNamed:@"defaultFemaleHeadImage40.png"];
     }
 
     __weak UIImageView *weakHeadImage = cell.imageView;

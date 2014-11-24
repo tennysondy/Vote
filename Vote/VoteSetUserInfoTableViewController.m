@@ -17,6 +17,8 @@
 #import "VoteLoginViewController.h"
 #import "VoteFourthTableViewController.h"
 #import "VoteHomeViewController.h"
+#import "LoadingIconImageView.h"
+#import "VoteCityTableViewController.h"
 
 @interface VoteSetUserInfoTableViewController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIActionSheetDelegate>
 
@@ -104,7 +106,7 @@
     if (section == 0)
         return 1;
     else if (section == 1) {
-        return 3;
+        return 4;
     } else {
         return 1;
     }
@@ -138,7 +140,7 @@
         cell = [tableView dequeueReusableCellWithIdentifier:@"Signout" forIndexPath:indexPath];
     }
 
-    if (indexPath.section == 0 && indexPath.row == 0) {
+    if (indexPath.section == 0) {
         cell.textLabel.text = @"头像";
         UIImageView *headImageView = (UIImageView *)[cell.contentView viewWithTag:SUITVC_HEAD_IMG_TAG];
         if (headImageView == nil) {
@@ -153,70 +155,96 @@
             NSLog(@"originalHeadImagePath: %@", self.aUser.originalHeadImagePath);
             headImageView.image = [UIImage imageWithContentsOfFile:self.aUser.originalHeadImagePath];
         } else {
-            headImageView.image = [UIImage imageNamed:@"friendLargeHeadImage.png"];
+            headImageView.image = [UIImage imageNamed:@"defaultHeadImage.png"];
         }
-    } else if (indexPath.section == 1 && indexPath.row == 0) {
-        cell.textLabel.text = @"昵称";
-        UILabel *label = (UILabel *)[cell.contentView viewWithTag:SUITVC_SCREEN_NAME_TAG];
-        if (label == nil) {
-            CGRect rect = CGRectMake(90, 10, 190, 30);
-            label = [[UILabel alloc] initWithFrame:rect];
-            label.tag = SUITVC_SCREEN_NAME_TAG;
-            label.textAlignment = NSTextAlignmentRight;
-            label.font = [UIFont systemFontOfSize:17.0];
-            label.textColor = [UIColor lightGrayColor];
-            //label.layer.borderWidth = 1.0;
-            //label.layer.borderColor = [[UIColor blackColor] CGColor];
-            [cell.contentView addSubview:label];
-        }
-        if (self.aUser.screenname != nil) {
-            label.text = self.aUser.screenname;
-        } else {
-            label.text= self.aUser.username;
-        }
-
-    } else if (indexPath.section == 1 && indexPath.row == 1) {
-        cell.textLabel.text = @"性别";
-        UILabel *label = (UILabel *)[cell.contentView viewWithTag:SUITVC_GENDER_TAG];
-        if (label == nil) {
-            CGRect rect = CGRectMake(90, 10, 190, 30);
-            label = [[UILabel alloc] initWithFrame:rect];
-            label.tag = SUITVC_GENDER_TAG;
-            label.textAlignment = NSTextAlignmentRight;
-            label.font = [UIFont systemFontOfSize:17.0];
-            label.textColor = [UIColor lightGrayColor];
-            //label.layer.borderWidth = 1.0;
-            //label.layer.borderColor = [[UIColor blackColor] CGColor];
-            [cell.contentView addSubview:label];
-        }
-        if (self.aUser.gender != nil) {
-            if ([self.aUser.gender isEqualToString:@"m"]) {
-                label.text = @"男";
-            } else {
-                label.text = @"女";
+    } else if (indexPath.section == 1) {
+        if (indexPath.row == 0) {
+            cell.textLabel.text = @"昵称";
+            UILabel *label = (UILabel *)[cell.contentView viewWithTag:SUITVC_SCREEN_NAME_TAG];
+            if (label == nil) {
+                CGRect rect = CGRectMake(90, 10, 190, 30);
+                label = [[UILabel alloc] initWithFrame:rect];
+                label.tag = SUITVC_SCREEN_NAME_TAG;
+                label.textAlignment = NSTextAlignmentRight;
+                label.font = [UIFont systemFontOfSize:17.0];
+                label.textColor = [UIColor lightGrayColor];
+                //label.layer.borderWidth = 1.0;
+                //label.layer.borderColor = [[UIColor blackColor] CGColor];
+                [cell.contentView addSubview:label];
             }
+            if (self.aUser.screenname != nil) {
+                label.text = self.aUser.screenname;
+            } else {
+                label.text= self.aUser.username;
+            }
+            
+        } else if (indexPath.row == 1) {
+            cell.textLabel.text = @"性别";
+            UILabel *label = (UILabel *)[cell.contentView viewWithTag:SUITVC_GENDER_TAG];
+            if (label == nil) {
+                CGRect rect = CGRectMake(90, 10, 190, 30);
+                label = [[UILabel alloc] initWithFrame:rect];
+                label.tag = SUITVC_GENDER_TAG;
+                label.textAlignment = NSTextAlignmentRight;
+                label.font = [UIFont systemFontOfSize:17.0];
+                label.textColor = [UIColor lightGrayColor];
+                //label.layer.borderWidth = 1.0;
+                //label.layer.borderColor = [[UIColor blackColor] CGColor];
+                [cell.contentView addSubview:label];
+            }
+            if (self.aUser.gender != nil) {
+                if ([self.aUser.gender isEqualToString:@"m"]) {
+                    label.text = @"男";
+                } else {
+                    label.text = @"女";
+                }
+            } else {
+                label.text = @"男";
+            }
+        } else if (indexPath.row == 2) {
+            cell.textLabel.text = @"所在城市";
+            UILabel *label = (UILabel *)[cell.contentView viewWithTag:SUITVC_CITY_TAG];
+            if (label == nil) {
+                CGRect rect = CGRectMake(90, 10, 190, 30);
+                label = [[UILabel alloc] initWithFrame:rect];
+                label.tag = SUITVC_CITY_TAG;
+                label.textAlignment = NSTextAlignmentRight;
+                label.font = [UIFont systemFontOfSize:17.0];
+                label.textColor = [UIColor lightGrayColor];
+                //label.layer.borderWidth = 1.0;
+                //label.layer.borderColor = [[UIColor blackColor] CGColor];
+                [cell.contentView addSubview:label];
+            }
+            NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+            NSString *city = [ud stringForKey:SERVER_CITY];
+            if (city == nil) {
+                city = @"北京";
+                [ud setObject:city forKey:SERVER_CITY];
+                [ud synchronize];
+            }
+            label.text = city;
+
         } else {
-            label.text = @"男";
+            cell.textLabel.text = @"个人签名";
+            UILabel *label = (UILabel *)[cell.contentView viewWithTag:SUITVC_SIGNATURE_TAG];
+            if (label == nil) {
+                CGRect rect = CGRectMake(90, 10, 190, 30);
+                label = [[UILabel alloc] initWithFrame:rect];
+                label.tag = SUITVC_SIGNATURE_TAG;
+                label.textAlignment = NSTextAlignmentRight;
+                label.font = [UIFont systemFontOfSize:17.0];
+                label.textColor = [UIColor lightGrayColor];
+                //label.layer.borderWidth = 1.0;
+                //label.layer.borderColor = [[UIColor blackColor] CGColor];
+                [cell.contentView addSubview:label];
+            }
+            if (self.aUser.signature != nil) {
+                label.text = self.aUser.signature;
+            } else {
+                label.text = @"这家伙很懒，什么也没留下";
+            }
         }
-    } else if (indexPath.section == 1 && indexPath.row == 2) {
-        cell.textLabel.text = @"个人签名";
-        UILabel *label = (UILabel *)[cell.contentView viewWithTag:SUITVC_SIGNATURE_TAG];
-        if (label == nil) {
-            CGRect rect = CGRectMake(90, 10, 190, 30);
-            label = [[UILabel alloc] initWithFrame:rect];
-            label.tag = SUITVC_SIGNATURE_TAG;
-            label.textAlignment = NSTextAlignmentRight;
-            label.font = [UIFont systemFontOfSize:17.0];
-            label.textColor = [UIColor lightGrayColor];
-            //label.layer.borderWidth = 1.0;
-            //label.layer.borderColor = [[UIColor blackColor] CGColor];
-            [cell.contentView addSubview:label];
-        }
-        if (self.aUser.signature != nil) {
-            label.text = self.aUser.signature;
-        } else {
-            label.text = @"这家伙很懒，什么也没留下";
-        }
+    
     } else {
         cell.textLabel.text = @"退出登录";
         cell.textLabel.textAlignment = NSTextAlignmentCenter;
@@ -227,18 +255,24 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == 0 && indexPath.row == 0) {
+    if (indexPath.section == 0) {
         UIActionSheet *myActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"拍照", @"从相册中选取", nil];
         [myActionSheet showInView:self.view];
-    } else if (indexPath.section == 1 && indexPath.row == 0) {
-        [self changeScreennameAtIndexPath:indexPath];
-    } else if (indexPath.section == 1 && indexPath.row == 1) {
-        [self changeGenderAtIndexPath:indexPath];
-    } else if (indexPath.section == 1 && indexPath.row == 2) {
-        [self changeSignatureAtIndexPath:indexPath];
+    } else if (indexPath.section == 1) {
+        if (indexPath.row == 0) {
+            [self changeScreennameAtIndexPath:indexPath];
+        } else if (indexPath.row == 1) {
+            [self changeGenderAtIndexPath:indexPath];
+        } else if (indexPath.row == 2) {
+            [self changeCityAtIndexPath:indexPath];
+        } else {
+            [self changeSignatureAtIndexPath:indexPath];
+        }
     } else {
         [self signout];
     }
+    
+
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
@@ -331,9 +365,9 @@
 {
     __weak typeof(self) weakSelf = self;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 0, 24, 24)];
+    LoadingIconImageView *activityIndicator = [[LoadingIconImageView alloc]initWithFrame:CGRectMake(0, 0, 24, 24)];
     activityIndicator.center = CGPointMake(weakSelf.view.center.x, weakSelf.view.center.y - NAVIGATION_BAR_HEIGHT);
-    [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+    //[activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     [weakSelf.view addSubview:activityIndicator];
     [activityIndicator startAnimating];
     NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
@@ -344,7 +378,7 @@
     CGSize size = CGSizeMake(ORIGINAL_HEAD_IMAGE_SIZE, ORIGINAL_HEAD_IMAGE_SIZE);
     UIImage *originalHeadImage = [UIImage imageWithImage:image scaledToSize:size];
     NSData *imgData = UIImagePNGRepresentation(originalHeadImage);
-    NSLog(@"Size of Image(bytes):%d",[imgData length]);
+    NSLog(@"Size of Image(bytes):%lu",(unsigned long)[imgData length]);
     [manager POST:@"http://115.28.228.41/vote/update_head_imag.php" parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFileData:UIImagePNGRepresentation(originalHeadImage) name:@"userfile" fileName:originalHeadImagePath mimeType:@"image/png"];
         //[formData appendPartWithFileURL:[NSURL URLWithString:originalHeadImagePath] name:@"userfile" error:nil];
@@ -392,11 +426,15 @@
         if (context) {
             [context performBlock:^{
                 weakSelf.aUser.screenname = newScreenName;
-                [context save:NULL];
             }];
         }
 
     };
+    if (self.aUser.screenname != nil) {
+        viewController.nameText = self.aUser.screenname;
+    } else {
+        viewController.nameText= self.aUser.username;
+    }
     [self presentViewController:viewController animated:YES completion:nil];
 }
 
@@ -410,12 +448,16 @@
         if (context) {
             [context performBlock:^{
                 weakSelf.aUser.gender = gender;
-                [context save:NULL];
             }];
             
         }
     };
     [self presentViewController:viewController animated:YES completion:nil];
+}
+
+- (void)changeCityAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self performSegueWithIdentifier:@"User Change City" sender:indexPath];
 }
 
 - (void)changeSignatureAtIndexPath:(NSIndexPath *)indexPath
@@ -428,10 +470,14 @@
         if (context) {
             [context performBlock:^{
                 weakSelf.aUser.signature = signature;
-                [context save:NULL];
             }];
         }
     };
+    if (self.aUser.signature != nil) {
+        viewController.signatureText = self.aUser.signature;
+    } else {
+        viewController.signatureText = @"这家伙很懒，什么也没留下";
+    }
     [self presentViewController:viewController animated:YES completion:nil];
 }
 
@@ -498,6 +544,23 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([segue.identifier isEqualToString:@"User Change City"]) {
+        VoteCityTableViewController *tvc = segue.destinationViewController;
+        tvc.identifier = @"User Change City";
+        __weak __typeof(self)weakSelf = self;
+        tvc.changeCity = ^(NSString *city){
+            NSUserDefaults *ud= [NSUserDefaults standardUserDefaults];
+            [ud setObject:city forKey:SERVER_CITY];
+            [ud synchronize];
+            UITableViewCell *cell = [weakSelf.tableView cellForRowAtIndexPath:(NSIndexPath *)sender];
+            UILabel *label = (UILabel *)[cell.contentView viewWithTag:SUITVC_CITY_TAG];
+            label.text = city;
+        };
+    }
+    //设置返回键的标题
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc]init];
+    backItem.title = @"";
+    self.navigationItem.backBarButtonItem = backItem;
 }
 
 

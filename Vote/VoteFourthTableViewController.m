@@ -28,7 +28,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
 }
 
@@ -87,8 +87,7 @@
              break;
      }
     UIView *v = [[UIView alloc] initWithFrame:CGRectMake(49.0, cell.frame.size.height - 0.5, 320.0, 0.5)];
-    v.backgroundColor = [UIColor lightGrayColor];
-    v.alpha = 0.3;
+    v.backgroundColor = SEPARATOR_COLOR;
     [cell.contentView addSubview:v];
     
     return cell;

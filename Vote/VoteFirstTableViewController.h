@@ -17,6 +17,9 @@
 
 @property (nonatomic, strong) NSOperationQueue *imagesDownloadQueue;
 
+
+- (void)fetchVotesInfoListFromServer;
+
 @end
 
 #define FTVC_NOTHING_IMG_TAG               1000

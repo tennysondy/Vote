@@ -14,7 +14,8 @@
 @property (strong, nonatomic) NSNumber *voteId;
 @property (strong, nonatomic) NSTimer *timer;
 @property (strong, nonatomic) NSString *endTime;
-@property (nonatomic, strong) NSOperationQueue *imagesDownloadQueue;
+@property (strong, nonatomic) NSOperationQueue *imagesDownloadQueue;
+@property (assign, nonatomic) BOOL loadingViewUpdateFlag;
 
 @end
 

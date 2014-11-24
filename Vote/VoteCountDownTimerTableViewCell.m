@@ -89,10 +89,10 @@
     self.ctgryImageView.image = [UIImage imageNamed:imageUrl];
 }
 
-- (void)setTitle:(NSString *)title
+- (void)setTitle:(NSMutableAttributedString *)title
 {
     _title = title;
-    self.titleLabel.text = title;
+    self.titleLabel.attributedText = title;
 }
 
 - (void)setCategory:(NSString *)category
@@ -135,7 +135,7 @@
         [self.timer invalidate];
     
     NSDate *now = [NSDate date];
-    if ([self.endTime earlierDate:now] == self.endTime) {
+    if ([[self.endTime earlierDate:now] isEqualToDate:self.endTime]) {
         self.timerLabel.text = @"已结束";
         if (self.voteExpireCallBack) {
             self.voteExpireCallBack();
@@ -161,7 +161,7 @@
     NSDate *now = [NSDate date];
     //NSLog(@"now = %@, endDate = %@", now, self.endTime);
     // has the target time passed?
-    if ([self.endTime earlierDate:now] == self.endTime) {
+    if ([[self.endTime earlierDate:now] isEqualToDate:self.endTime]) {
         [self.timer invalidate];
         self.timerLabel.text = @"已结束";
         if (self.voteExpireCallBack) {
